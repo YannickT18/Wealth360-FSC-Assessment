@@ -49,7 +49,7 @@ public with sharing class CTRL_Wealth360Dashboard {
      * @return List of asset allocation data
      */
     @AuraEnabled(cacheable=true)
-    public static List<WRP_Wealth360Dashboard.AssetAllocation> getAssetAllocation(Id accountId) {
+    public static List<DTO_Wealth360Dashboard.AssetAllocation> getAssetAllocation(Id accountId) {
         try {
             // Get all financial accounts for the account
             List<FinServ__FinancialAccount__c> financialAccounts = [
@@ -61,7 +61,7 @@ public with sharing class CTRL_Wealth360Dashboard {
             ];
             
             if (financialAccounts.isEmpty()) {
-                return new List<WRP_Wealth360Dashboard.AssetAllocation>();
+                return new List<DTO_Wealth360Dashboard.AssetAllocation>();
             }
             
             Set<Id> financialAccountIds = new Set<Id>();
@@ -79,7 +79,7 @@ public with sharing class CTRL_Wealth360Dashboard {
                 GROUP BY FinServ__AssetCategory__c
             ];
             
-            List<WRP_Wealth360Dashboard.AssetAllocation> allocations = new List<WRP_Wealth360Dashboard.AssetAllocation>();
+            List<DTO_Wealth360Dashboard.AssetAllocation> allocations = new List<DTO_Wealth360Dashboard.AssetAllocation>();
             Decimal grandTotal = 0;
             
             // First pass: calculate total
@@ -97,7 +97,7 @@ public with sharing class CTRL_Wealth360Dashboard {
                 
                 if (category != null && value != null && grandTotal > 0) {
                     Decimal percentage = (value / grandTotal * 100).setScale(2);
-                    allocations.add(new WRP_Wealth360Dashboard.AssetAllocation(category, value, percentage));
+                    allocations.add(new DTO_Wealth360Dashboard.AssetAllocation(category, value, percentage));
                 }
             }
             
@@ -115,7 +115,7 @@ public with sharing class CTRL_Wealth360Dashboard {
      * @return List of recent transactions
      */
     @AuraEnabled(cacheable=true)
-    public static List<WRP_Wealth360Dashboard.TransactionData> getRecentTransactions(Id accountId, Integer limitCount) {
+    public static List<DTO_Wealth360Dashboard.TransactionData> getRecentTransactions(Id accountId, Integer limitCount) {
         try {
             Integer recordLimit = limitCount != null ? limitCount : 10;
             
@@ -129,7 +129,7 @@ public with sharing class CTRL_Wealth360Dashboard {
             ];
             
             if (financialAccounts.isEmpty()) {
-                return new List<WRP_Wealth360Dashboard.TransactionData>();
+                return new List<DTO_Wealth360Dashboard.TransactionData>();
             }
             
             Set<Id> financialAccountIds = new Set<Id>();
@@ -158,10 +158,10 @@ public with sharing class CTRL_Wealth360Dashboard {
                 AccessType.READABLE, transactions
             );
             
-            List<WRP_Wealth360Dashboard.TransactionData> transactionDataList = new List<WRP_Wealth360Dashboard.TransactionData>();
+            List<DTO_Wealth360Dashboard.TransactionData> transactionDataList = new List<DTO_Wealth360Dashboard.TransactionData>();
             for (FinServ__FinancialAccountTransaction__c txn : 
                  (List<FinServ__FinancialAccountTransaction__c>)decision.getRecords()) {
-                transactionDataList.add(new WRP_Wealth360Dashboard.TransactionData(txn));
+                transactionDataList.add(new DTO_Wealth360Dashboard.TransactionData(txn));
             }
             
             return transactionDataList;
@@ -223,9 +223,9 @@ public with sharing class CTRL_Wealth360Dashboard {
      * @return Portfolio summary data
      */
     @AuraEnabled(cacheable=true)
-    public static WRP_Wealth360Dashboard.PortfolioSummary getPortfolioSummary(Id accountId) {
+    public static DTO_Wealth360Dashboard.PortfolioSummary getPortfolioSummary(Id accountId) {
         try {
-            WRP_Wealth360Dashboard.PortfolioSummary summary = new WRP_Wealth360Dashboard.PortfolioSummary();
+            DTO_Wealth360Dashboard.PortfolioSummary summary = new DTO_Wealth360Dashboard.PortfolioSummary();
             
             // Get portfolio count and total value
             AggregateResult[] portfolioResults = [

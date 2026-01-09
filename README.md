@@ -48,10 +48,11 @@ Wealth360-FSC-Assessment/
 
 ## 🔧 Key Components
 
-- **CTRL_Wealth360Dashboard**: LWC controller
-- **SRV_InvestmentPortfolioAPI**: API integration service
-- **SRV_PortfolioUpdate**: Business logic service  
-- **WRP_Wealth360Dashboard**: Data transfer objects
+- **CTRL_Wealth360Dashboard**: LWC controller for dashboard functionality
+- **SRV_InvestmentPortfolioAPI**: API integration service layer
+- **SRV_PortfolioUpdate**: Business logic service for data processing
+- **DTO_Wealth360Dashboard**: Data transfer objects for clean UI contracts
+- **Queueable_PortfolioSync**: Asynchronous portfolio synchronization
 
 ## 📊 Features
 

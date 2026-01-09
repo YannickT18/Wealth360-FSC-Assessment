@@ -1,10 +1,10 @@
 /**
- * @description Test class for WRP_Wealth360Dashboard wrapper classes
+ * @description Test class for DTO_Wealth360Dashboard data transfer object classes
  * @author Wealth360 Team
  * @date 2026
  */
 @IsTest
-private class WRP_Wealth360Dashboard_Test {
+private class DTO_Wealth360Dashboard_Test {
     
     @TestSetup
     static void makeData() {
@@ -38,12 +38,12 @@ private class WRP_Wealth360Dashboard_Test {
     @IsTest
     static void testAssetAllocation() {
         // Test default constructor
-        WRP_Wealth360Dashboard.AssetAllocation allocation1 = new WRP_Wealth360Dashboard.AssetAllocation();
+        DTO_Wealth360Dashboard.AssetAllocation allocation1 = new DTO_Wealth360Dashboard.AssetAllocation();
         System.assertNotNull(allocation1, 'Default constructor should create instance');
         
         // Test parameterized constructor
-        WRP_Wealth360Dashboard.AssetAllocation allocation2 = 
-            new WRP_Wealth360Dashboard.AssetAllocation('Stocks', 10000.00, 65.5);
+        DTO_Wealth360Dashboard.AssetAllocation allocation2 = 
+            new DTO_Wealth360Dashboard.AssetAllocation('Stocks', 10000.00, 65.5);
         
         System.assertEquals('Stocks', allocation2.category, 'Category should be set');
         System.assertEquals(10000.00, allocation2.value, 'Value should be set');
@@ -53,7 +53,7 @@ private class WRP_Wealth360Dashboard_Test {
     @IsTest
     static void testTransactionDataDefaultConstructor() {
         // Test default constructor
-        WRP_Wealth360Dashboard.TransactionData txnData = new WRP_Wealth360Dashboard.TransactionData();
+        DTO_Wealth360Dashboard.TransactionData txnData = new DTO_Wealth360Dashboard.TransactionData();
         System.assertNotNull(txnData, 'Default constructor should create instance');
     }
     
@@ -72,8 +72,8 @@ private class WRP_Wealth360Dashboard_Test {
         System.assertFalse(transactions.isEmpty(), 'Test transactions list should not be empty');
         
         // Test constructor with SObject
-        WRP_Wealth360Dashboard.TransactionData txnData = 
-            new WRP_Wealth360Dashboard.TransactionData(transactions[0]);
+        DTO_Wealth360Dashboard.TransactionData txnData = 
+            new DTO_Wealth360Dashboard.TransactionData(transactions[0]);
         
         System.assertEquals(transactions[0].Id, txnData.id, 'ID should match');
         System.assertEquals(transactions[0].Name, txnData.name, 'Name should match');
@@ -95,7 +95,7 @@ private class WRP_Wealth360Dashboard_Test {
     @IsTest
     static void testPortfolioSummary() {
         // Test default constructor
-        WRP_Wealth360Dashboard.PortfolioSummary summary = new WRP_Wealth360Dashboard.PortfolioSummary();
+        DTO_Wealth360Dashboard.PortfolioSummary summary = new DTO_Wealth360Dashboard.PortfolioSummary();
         
         System.assertNotNull(summary, 'Constructor should create instance');
         System.assertEquals(0, summary.portfolioCount, 'Portfolio count should be 0');
@@ -107,12 +107,12 @@ private class WRP_Wealth360Dashboard_Test {
     @IsTest
     static void testPortfolioPerformance() {
         // Test default constructor
-        WRP_Wealth360Dashboard.PortfolioPerformance perf1 = new WRP_Wealth360Dashboard.PortfolioPerformance();
+        DTO_Wealth360Dashboard.PortfolioPerformance perf1 = new DTO_Wealth360Dashboard.PortfolioPerformance();
         System.assertNotNull(perf1, 'Default constructor should create instance');
         
         // Test parameterized constructor - positive change
-        WRP_Wealth360Dashboard.PortfolioPerformance perf2 = 
-            new WRP_Wealth360Dashboard.PortfolioPerformance('Test Portfolio', 11000.00, 10000.00);
+        DTO_Wealth360Dashboard.PortfolioPerformance perf2 = 
+            new DTO_Wealth360Dashboard.PortfolioPerformance('Test Portfolio', 11000.00, 10000.00);
         
         System.assertEquals('Test Portfolio', perf2.portfolioName, 'Portfolio name should be set');
         System.assertEquals(11000.00, perf2.currentValue, 'Current value should be set');
@@ -122,24 +122,24 @@ private class WRP_Wealth360Dashboard_Test {
         System.assertEquals('up', perf2.trend, 'Trend should be up');
         
         // Test negative change
-        WRP_Wealth360Dashboard.PortfolioPerformance perf3 = 
-            new WRP_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 2', 9000.00, 10000.00);
+        DTO_Wealth360Dashboard.PortfolioPerformance perf3 = 
+            new DTO_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 2', 9000.00, 10000.00);
         
         System.assertEquals(-1000.00, perf3.changeAmount, 'Change amount should be negative');
         System.assertEquals(-10.00, perf3.changePercentage, 'Change percentage should be negative');
         System.assertEquals('down', perf3.trend, 'Trend should be down');
         
         // Test neutral change
-        WRP_Wealth360Dashboard.PortfolioPerformance perf4 = 
-            new WRP_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 3', 10000.00, 10000.00);
+        DTO_Wealth360Dashboard.PortfolioPerformance perf4 = 
+            new DTO_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 3', 10000.00, 10000.00);
         
         System.assertEquals(0, perf4.changeAmount, 'Change amount should be zero');
         System.assertEquals(0, perf4.changePercentage, 'Change percentage should be zero');
         System.assertEquals('neutral', perf4.trend, 'Trend should be neutral');
         
         // Test null values
-        WRP_Wealth360Dashboard.PortfolioPerformance perf5 = 
-            new WRP_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 4', null, 10000.00);
+        DTO_Wealth360Dashboard.PortfolioPerformance perf5 = 
+            new DTO_Wealth360Dashboard.PortfolioPerformance('Test Portfolio 4', null, 10000.00);
         
         System.assertEquals(0, perf5.changeAmount, 'Change amount should be zero for null values');
         System.assertEquals(0, perf5.changePercentage, 'Change percentage should be zero for null values');
@@ -152,8 +152,8 @@ private class WRP_Wealth360Dashboard_Test {
         String testMessage = 'Operation completed successfully';
         String testData = 'Test data';
         
-        WRP_Wealth360Dashboard.ApiResponse response = 
-            WRP_Wealth360Dashboard.ApiResponse.success(testMessage, testData);
+        DTO_Wealth360Dashboard.ApiResponse response = 
+            DTO_Wealth360Dashboard.ApiResponse.success(testMessage, testData);
         
         System.assertNotNull(response, 'Response should not be null');
         System.assertEquals(true, response.success, 'Success should be true');
@@ -168,8 +168,8 @@ private class WRP_Wealth360Dashboard_Test {
         String testMessage = 'Operation failed';
         String testErrorCode = 'ERR_001';
         
-        WRP_Wealth360Dashboard.ApiResponse response = 
-            WRP_Wealth360Dashboard.ApiResponse.error(testMessage, testErrorCode);
+        DTO_Wealth360Dashboard.ApiResponse response = 
+            DTO_Wealth360Dashboard.ApiResponse.error(testMessage, testErrorCode);
         
         System.assertNotNull(response, 'Response should not be null');
         System.assertEquals(false, response.success, 'Success should be false');
@@ -181,7 +181,7 @@ private class WRP_Wealth360Dashboard_Test {
     @IsTest
     static void testApiResponseDefaultConstructor() {
         // Test default constructor
-        WRP_Wealth360Dashboard.ApiResponse response = new WRP_Wealth360Dashboard.ApiResponse();
+        DTO_Wealth360Dashboard.ApiResponse response = new DTO_Wealth360Dashboard.ApiResponse();
         System.assertNotNull(response, 'Default constructor should create instance');
     }
 }

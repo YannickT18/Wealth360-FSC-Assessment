@@ -1,12 +1,12 @@
 /**
- * @description Wrapper/DTO classes for Wealth360 Dashboard data transfer
+ * @description Data Transfer Object (DTO) classes for Wealth360 Dashboard
  * @author Wealth360 Team
  * @date 2026
  * 
  * Contains all data transfer objects used by CTRL_Wealth360Dashboard
  * for clean separation of concerns and reusability
  */
-public with sharing class WRP_Wealth360Dashboard {
+public with sharing class DTO_Wealth360Dashboard {
     
     /**
      * @description Asset allocation data for pie charts and portfolio breakdowns
