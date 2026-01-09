@@ -3,8 +3,7 @@
  * @author Yannick Kayombo
  * @date 22-11-2025
  */
- * - Tests error handling (429, 500 errors)
- */
+
 @isTest
 private class SRV_InvestmentPortfolio_Test {
     
