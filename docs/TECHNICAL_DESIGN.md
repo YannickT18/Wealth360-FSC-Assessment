@@ -14,7 +14,7 @@ Wealth360 is a Financial Services Cloud (FSC) solution that provides financial a
 ### 1.1 System Architecture Diagram
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    Wealth360 Dashboard (LWC)                     │
+│                    Wealth360 Dashboard (LWC)                    │
 │  ┌──────────────┐  ┌──────────────┐  ┌─────────────────────┐  │
 │  │ Total Value  │  │ Asset Alloc  │  │ Recent Transactions │  │
 │  │   Metrics    │  │  Pie Chart   │  │     DataTable       │  │
