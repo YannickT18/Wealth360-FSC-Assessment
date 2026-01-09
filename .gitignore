@@ -1,0 +1,46 @@
+# Salesforce
+.sfdx/
+.sf/
+.localdevserver/
+deploy-options.json
+.vscode/settings.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.iml
+.project
+.settings/
+
+# Node
+node_modules/
+npm-debug.log
+
+# Package Managers
+package-lock.json
+yarn.lock
+
+# Test results
+coverage/
+test-results/
+.nyc_output/
+
+# Scratch Orgs
+.sfdx/
+config/tmp/
+
+# Environment
+.env
+*.local
+
+# Build
+dist/
+build/

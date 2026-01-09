@@ -1,0 +1,128 @@
+<template>
+    <lightning-card title="Wealth360 Portfolio Dashboard" icon-name="standard:investment_account">
+        <!-- Header with sync button -->
+        <div slot="actions">
+            <lightning-button
+                label="Sync Portfolio"
+                icon-name="utility:refresh"
+                onclick={handleSync}
+                disabled={isLoading}
+            ></lightning-button>
+        </div>
+
+        <!-- Loading spinner -->
+        <template if:true={isLoading}>
+            <div class="slds-is-relative slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error message -->
+        <template if:true={error}>
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <h2>{error}</h2>
+                </div>
+            </div>
+        </template>
+
+        <!-- Main content -->
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <!-- Summary metrics -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Investment Value</div>
+                        <div class="metric-value">{formattedTotalValue}</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Portfolios</div>
+                        <div class="metric-value">{portfolioCount}</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <div class="metric-card">
+                        <div class="metric-label">Holdings</div>
+                        <div class="metric-value">{holdingsCount}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asset Allocation Chart -->
+            <div class="slds-m-bottom_medium">
+                <h3 class="slds-text-heading_small slds-m-bottom_small">Asset Allocation</h3>
+                <template if:true={hasChartData}>
+                    <div class="slds-grid slds-gutters">
+                        <!-- Donut Chart -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="donut-chart-container">
+                                <svg viewBox="0 0 200 200" class="donut-chart">
+                                    <template for:each={allocationData} for:item="allocation">
+                                        <circle
+                                            key={allocation.category}
+                                            cx="100"
+                                            cy="100"
+                                            r="80"
+                                            fill="transparent"
+                                            stroke={allocation.color}
+                                            stroke-width="40"
+                                            stroke-dasharray={allocation.dashArray}
+                                            stroke-dashoffset={allocation.dashOffset}
+                                            class="donut-segment"
+                                        ></circle>
+                                    </template>
+                                    <circle cx="100" cy="100" r="60" fill="white"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Legend -->
+                        <div class="slds-col slds-size_1-of-2">
+                            <div class="donut-legend">
+                                <template for:each={allocationData} for:item="allocation">
+                                    <div key={allocation.category} class="legend-item">
+                                        <span class="legend-color" data-color={allocation.color}></span>
+                                        <div class="legend-details">
+                                            <div class="legend-category">{allocation.category}</div>
+                                            <div class="legend-values">
+                                                <span class="legend-percentage">{allocation.percentage}%</span>
+                                                <span class="legend-value">{allocation.formattedValue}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template if:false={hasChartData}>
+                    <div class="slds-text-align_center slds-p-around_large">
+                        <lightning-icon icon-name="utility:info" size="small"></lightning-icon>
+                        <p class="slds-m-top_small">No asset allocation data available. Click "Sync Portfolio" to fetch data.</p>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div>
+                <h3 class="slds-text-heading_small slds-m-bottom_small">Recent Transactions</h3>
+                <template if:true={hasTransactions}>
+                    <lightning-datatable
+                        key-field="id"
+                        data={transactionData}
+                        columns={transactionColumns}
+                        hide-checkbox-column="true"
+                    ></lightning-datatable>
+                </template>
+                <template if:false={hasTransactions}>
+                    <div class="slds-text-align_center slds-p-around_large">
+                        <lightning-icon icon-name="utility:info" size="small"></lightning-icon>
+                        <p class="slds-m-top_small">No recent transactions available. Click "Sync Portfolio" to fetch data.</p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>

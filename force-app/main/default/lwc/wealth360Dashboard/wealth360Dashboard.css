@@ -1,0 +1,99 @@
+.metric-card {
+    background: #f3f3f3;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #706e6b;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #080707;
+}
+
+/* Donut Chart Styles */
+.donut-chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.donut-chart {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    transform: rotate(-90deg);
+}
+
+.donut-segment {
+    transition: all 0.3s ease;
+}
+
+.donut-segment:hover {
+    opacity: 0.8;
+    stroke-width: 45;
+}
+
+/* Legend Styles */
+.donut-legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-details {
+    flex: 1;
+}
+
+.legend-category {
+    font-weight: 600;
+    color: #080707;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.legend-values {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.legend-percentage {
+    font-weight: 700;
+    color: #1589EE;
+    font-size: 0.875rem;
+}
+
+.legend-value {
+    font-size: 0.875rem;
+    color: #706e6b;
+}
+
+lightning-card {
+    margin-bottom: 1rem;
+}

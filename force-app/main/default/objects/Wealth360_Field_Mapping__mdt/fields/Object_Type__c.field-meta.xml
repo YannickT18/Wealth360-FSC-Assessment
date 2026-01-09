@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Object_Type__c</fullName>
+    <description>Salesforce object type (Portfolio, Holding, Transaction)</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Object Type</label>
+    <required>true</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <value>
+                <fullName>Portfolio</fullName>
+                <default>false</default>
+                <label>Portfolio</label>
+            </value>
+            <value>
+                <fullName>Holding</fullName>
+                <default>false</default>
+                <label>Holding</label>
+            </value>
+            <value>
+                <fullName>Transaction</fullName>
+                <default>false</default>
+                <label>Transaction</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

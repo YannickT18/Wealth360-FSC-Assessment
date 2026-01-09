@@ -1,0 +1,18 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "Wealth360",
+      "versionName": "ver 1.0",
+      "versionNumber": "1.0.0.NEXT"
+    }
+  ],
+  "name": "Wealth360-FSC-Assessment",
+  "namespace": "",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "62.0",
+  "plugins": {
+    "dependencies": []
+  }
+}

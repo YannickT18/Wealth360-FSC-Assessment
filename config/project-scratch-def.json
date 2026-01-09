@@ -1,0 +1,30 @@
+{
+  "orgName": "Wealth360 - FSC Assessment",
+  "edition": "Developer",
+  "features": ["EnableSetPasswordInApi", "Communities"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    },
+    "communitiesSettings": {
+      "enableNetworksEnabled": true
+    },
+    "securitySettings": {
+      "sessionSettings": {
+        "forceRelogin": false
+      }
+    },
+    "financialServicesCloudSettings": {
+      "enableFinancialServicesCloud": true
+    }
+  },
+  "hasSampleData": false,
+  "orgPreferences": {
+    "enabled": [
+      "S1DesktopEnabled"
+    ]
+  }
+}

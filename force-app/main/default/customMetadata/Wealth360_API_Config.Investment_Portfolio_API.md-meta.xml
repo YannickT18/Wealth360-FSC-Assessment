@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Investment Portfolio API</label>
+    <protected>false</protected>
+    <values>
+        <field>Named_Credential__c</field>
+        <value xsi:type="xsd:string">InvestmentPortfolioAPI</value>
+    </values>
+    <values>
+        <field>Portfolios_Endpoint__c</field>
+        <value xsi:type="xsd:string">/api/v1/portfolios</value>
+    </values>
+    <values>
+        <field>Holdings_Endpoint__c</field>
+        <value xsi:type="xsd:string">/api/v1/portfolios/{portfolioId}/holdings</value>
+    </values>
+    <values>
+        <field>Transactions_Endpoint__c</field>
+        <value xsi:type="xsd:string">/api/v1/portfolios/{portfolioId}/transactions</value>
+    </values>
+    <values>
+        <field>Timeout_Milliseconds__c</field>
+        <value xsi:type="xsd:double">120000</value>
+    </values>
+    <values>
+        <field>Retry_Count__c</field>
+        <value xsi:type="xsd:double">3</value>
+    </values>
+    <values>
+        <field>Lookback_Days__c</field>
+        <value xsi:type="xsd:double">90</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+</CustomMetadata>
