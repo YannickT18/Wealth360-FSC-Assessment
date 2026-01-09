@@ -9,7 +9,7 @@ The integration flow:
 2. **Salesforce Named Credential** → Securely connects to the mock API
 3. **SRV_InvestmentPortfolioAPI** → API integration service for HTTP callouts
 4. **SRV_PortfolioUpdate** → Business logic service for data synchronization
-5. **WRP_Wealth360Dashboard** → Wrapper classes for clean data transfer
+5. **DTO_Wealth360Dashboard** → Data Transfer Objects for clean data transfer
 6. **CTRL_Wealth360Dashboard** → Controller that orchestrates services
 7. **wealth360Dashboard LWC** → UI that displays the data
 
@@ -326,7 +326,7 @@ The code architecture includes:
 1. **CTRL_Wealth360Dashboard.cls** - Controller orchestrating services
 2. **SRV_InvestmentPortfolioAPI.cls** - API integration service
 3. **SRV_PortfolioUpdate.cls** - Business logic and data sync service
-4. **WRP_Wealth360Dashboard.cls** - Wrapper classes for data transfer
+4. **DTO_Wealth360Dashboard.cls** - Data Transfer Objects for clean data handling
 5. **Wealth360_Field_Mapping__mdt** - Custom Metadata Type
 6. **wealth360Dashboard** LWC - UI component
 
