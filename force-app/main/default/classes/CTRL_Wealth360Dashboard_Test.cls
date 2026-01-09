@@ -124,7 +124,7 @@ private class CTRL_Wealth360Dashboard_Test {
         Account acc = [SELECT Id FROM Account LIMIT 1];
         
         // Set mock callout
-        Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI());
+        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI());
         
         // Test
         Test.startTest();

@@ -11,6 +11,38 @@
 public class TEST_DataFactory {
     
     /**
+     * @description Simple HTTP Mock for API tests
+     */
+    public class Mock_InvestmentPortfolioAPI implements HttpCalloutMock {
+        private Integer statusCode;
+        private String responseBody;
+        
+        public Mock_InvestmentPortfolioAPI() {
+            this(200, null);
+        }
+        
+        public Mock_InvestmentPortfolioAPI(Integer statusCode, String errorMessage) {
+            this.statusCode = statusCode;
+            this.responseBody = createMockResponse(statusCode == 200);
+        }
+        
+        public HttpResponse respond(HttpRequest request) {
+            HttpResponse response = new HttpResponse();
+            response.setStatusCode(statusCode);
+            response.setBody(responseBody);
+            return response;
+        }
+        
+        private String createMockResponse(Boolean success) {
+            if (success) {
+                return '{"success":true,"portfolios":[{"portfolioId":"P001","name":"Test Portfolio","totalValue":100000,"currency":"USD","lastUpdated":"2026-01-01","accountType":"Investment","status":"Active","holdings":[{"holdingId":"H001","assetCategory":"Equity","assetName":"Test Stock","currentValue":50000,"quantity":100,"pricePerUnit":500}],"transactions":[{"transactionId":"T001","type":"BUY","amount":50000,"transactionDate":"2026-01-01","status":"Completed","description":"Purchase"}]}]}';
+            } else {
+                return '{"success":false,"error":"API Error"}';
+            }
+        }
+    }
+    
+    /**
      * @description Create test Account (Person Account for FSC)
      */
     public static Account createAccount(String lastName, Boolean doInsert) {

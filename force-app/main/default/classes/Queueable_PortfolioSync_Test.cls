@@ -175,7 +175,7 @@ private class Queueable_PortfolioSync_Test {
         List<Id> accountIds = new List<Id>{ acc.Id };
         
         // Set mock callout with error
-        Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI(500, 'error'));
+        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI(500, 'error'));
         
         // Test
         Test.startTest();

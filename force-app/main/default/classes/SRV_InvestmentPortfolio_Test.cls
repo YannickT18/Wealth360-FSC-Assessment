@@ -98,7 +98,7 @@ private class SRV_InvestmentPortfolio_Test {
     @isTest
     static void testRateLimitError() {
         // Set mock callout with rate limit error
-        Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI(429, 'error'));
+        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI(429, 'error'));
         
         Account acc = TEST_DataFactory.createAccount('TestClient', true);
         
@@ -118,7 +118,7 @@ private class SRV_InvestmentPortfolio_Test {
     @isTest
     static void testServerError() {
         // Set mock callout with server error
-        Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI(500, 'error'));
+        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI(500, 'error'));
         
         Account acc = TEST_DataFactory.createAccount('TestClient', true);
         
