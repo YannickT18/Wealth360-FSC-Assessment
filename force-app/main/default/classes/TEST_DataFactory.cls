@@ -1,11 +1,7 @@
 /**
  * @description Test Data Factory for Wealth360 Assessment
- * @author Wealth360 Assessment
- * @date 2025-11-22
- * Demonstrates:
- * - Test data creation patterns
- * - FSC object relationships
- * - Efficient bulk test data generation
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 @isTest
 public class TEST_DataFactory {

@@ -1,21 +1,7 @@
 /**
  * @description Apex controller for Wealth360 Dashboard LWC
- * @author Wealth360 Assessment  
- * @date 2025-11-22
- * 
- * Best Practices Demonstrated:
- * - @AuraEnabled(cacheable=true) for wire service and client-side caching
- * - with sharing keyword for FLS/CRUD enforcement
- * - Security.stripInaccessible() for field-level security
- * - WITH SECURITY_ENFORCED in SOQL queries
- * - AuraHandledException for user-friendly error messages
- * - Efficient SOQL with relationship queries
- * - Aggregate queries for performance
- * - Wrapper classes for clean data structure
- * - Single Responsibility: only handles data retrieval
- * 
- * Design Pattern: Controller Pattern (MVC)
- * Sharing: with sharing (respects user permissions)
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 public with sharing class CTRL_Wealth360Dashboard {
     

@@ -1,22 +1,7 @@
 /**
  * @description Queueable class for async bulk synchronization of comprehensive portfolio data
- * @author Wealth360 Assessment
- * @date 2025-11-22
- * 
- * Best Practices Demonstrated:
- * - Queueable interface for async processing (better than @future)
- * - Database.AllowsCallouts for HTTP integration
- * - Bulkification: processes 50 accounts per job
- * - Job chaining for unlimited scalability
- * - Single comprehensive API call per account (optimization)
- * - Database.upsert() with External ID for idempotent operations
- * - allOrNone=false for partial success handling
- * - Proper exception handling with logging
- * - Separation of concerns (distinct methods for different data types)
- * - Governor limit awareness (callout limits, DML limits)
- * 
- * Design Pattern: Asynchronous Processing Pattern with Comprehensive Data Sync
- * Sharing: without sharing (system context for bulk operations)
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 public without sharing class Queueable_PortfolioSync implements Queueable, Database.AllowsCallouts {
     

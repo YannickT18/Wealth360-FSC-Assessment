@@ -1,7 +1,7 @@
 /**
  * @description Test class for DTO_Wealth360Dashboard data transfer object classes
- * @author Wealth360 Team
- * @date 2026
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 @IsTest
 private class DTO_Wealth360Dashboard_Test {

@@ -1,7 +1,7 @@
 /**
  * @description Service class to handle portfolio data synchronization with metadata-driven field mapping
- * @author Wealth360 Team
- * @date 2026
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 public with sharing class SRV_PortfolioUpdate {
     

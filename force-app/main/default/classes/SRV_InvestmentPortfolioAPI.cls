@@ -1,20 +1,7 @@
 /**
  * @description Service class for integrating with external Investment Portfolio API
- * @author Wealth360 Assessment
- * @date 2025-11-22
- * 
- * Best Practices Demonstrated:
- * - Single Responsibility Principle (SRP) - Only handles API integration
- * - Named Credential usage for security
- * - HTTP callout best practices with retry logic
- * - Exponential backoff for rate limiting
- * - Proper exception handling and logging
- * - Bulkification patterns for multiple callouts
- * - Separation of concerns (parsing separate from calling)
- * - Private helper methods for code reusability
- * 
- * Design Pattern: Service Layer Pattern
- * Sharing: with sharing (respects user permissions for related records)
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 public with sharing class SRV_InvestmentPortfolioAPI {
     

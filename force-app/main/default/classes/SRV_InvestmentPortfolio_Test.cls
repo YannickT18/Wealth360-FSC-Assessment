@@ -1,13 +1,8 @@
 /**
  * @description Test class for SRV_InvestmentPortfolioAPI
- * @author Wealth360 Assessment
- * @date 2025-11-22
- * 
- * Best Practices:
- * - Uses Test.setMock() for HTTP callouts
- * - Tests positive and negative scenarios
- * - Follows AAA pattern (Arrange, Act, Assert)
- * - Uses meaningful assertions
+ * @author Yannick Kayombo
+ * @date 22-11-2025
+ */
  * - Tests error handling (429, 500 errors)
  */
 @isTest

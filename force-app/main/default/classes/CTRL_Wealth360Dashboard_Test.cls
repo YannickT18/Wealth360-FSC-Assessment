@@ -1,7 +1,7 @@
 /**
  * @description Test class for CTRL_Wealth360Dashboard
- * @author Wealth360 Assessment
- * @date 2025-11-22
+ * @author Yannick Kayombo
+ * @date 22-11-2025
  */
 @isTest
 private class CTRL_Wealth360Dashboard_Test {
