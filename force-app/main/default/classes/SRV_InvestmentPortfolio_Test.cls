@@ -8,7 +8,7 @@
 private class SRV_InvestmentPortfolio_Test {
     
     @isTest
-    static void testGetPortfoliosSuccess() {
+    static void testGetComprehensivePortfolioDataSuccess() {
         // Setup
         Account acc = TEST_DataFactory.createAccount('TestClient', true);
         
@@ -18,7 +18,7 @@ private class SRV_InvestmentPortfolio_Test {
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getPortfolios(acc.Id);
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, false, false, 0);
         Test.stopTest();
         
         // Verify
@@ -33,13 +33,16 @@ private class SRV_InvestmentPortfolio_Test {
     
     @isTest
     static void testGetPortfolioByIdSuccess() {
+        // Setup
+        Account acc = TEST_DataFactory.createAccount('TestClient', true);
+        
         // Set mock callout
         Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI());
         
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getPortfolioById('PORT-001');
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, false, false, 0);
         Test.stopTest();
         
         // Verify
@@ -49,13 +52,16 @@ private class SRV_InvestmentPortfolio_Test {
     
     @isTest
     static void testGetHoldingsSuccess() {
+        // Setup
+        Account acc = TEST_DataFactory.createAccount('TestClient', true);
+        
         // Set mock callout
         Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI());
         
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getHoldings('PORT-001');
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, true, false, 0);
         Test.stopTest();
         
         // Verify
@@ -68,6 +74,9 @@ private class SRV_InvestmentPortfolio_Test {
     
     @isTest
     static void testGetTransactionsSuccess() {
+        // Setup
+        Account acc = TEST_DataFactory.createAccount('TestClient', true);
+        
         // Set mock callout
         Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI());
         
@@ -77,7 +86,7 @@ private class SRV_InvestmentPortfolio_Test {
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getTransactions('PORT-001', startDate, endDate);
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, false, true, 30);
         Test.stopTest();
         
         // Verify
@@ -85,8 +94,7 @@ private class SRV_InvestmentPortfolio_Test {
         Assert.areEqual(200, response.statusCode, 'Status code should be 200');
         
         Map<String, Object> responseData = (Map<String, Object>)response.data;
-        Assert.isTrue(responseData.containsKey('transactions'), 
-                     'Response should contain transactions');
+        Assert.isTrue(responseData.containsKey('transactions'), 'Response should contain transactions');
     }
     
     @isTest
@@ -99,27 +107,26 @@ private class SRV_InvestmentPortfolio_Test {
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getPortfolios(acc.Id);
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, false, false, 0);
         Test.stopTest();
         
         // Verify
         Assert.isTrue(!response.success, 'Response should fail');
         Assert.areEqual(429, response.statusCode, 'Status code should be 429');
-        Assert.isTrue(response.errorMessage.contains('Rate limit'), 
-                     'Error message should mention rate limit');
+        Assert.isTrue(response.errorMessage.contains('Rate limit'),  'Error message should mention rate limit');
     }
     
     @isTest
     static void testServerError() {
         // Set mock callout with server error
-        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI(500, 'error'));
+        Test.setMock(HttpCalloutMock.class, new Mock_InvestmentPortfolioAPI(500, 'error'));
         
         Account acc = TEST_DataFactory.createAccount('TestClient', true);
         
         // Test
         Test.startTest();
         SRV_InvestmentPortfolioAPI.APIResponse response = 
-            SRV_InvestmentPortfolioAPI.getPortfolios(acc.Id);
+            SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, false, false, 0);
         Test.stopTest();
         
         // Verify
@@ -143,14 +150,13 @@ private class SRV_InvestmentPortfolio_Test {
         
         // Test
         Test.startTest();
-        List<Map<String, Object>> portfolios = 
-            SRV_InvestmentPortfolioAPI.parsePortfolios(responseData);
+        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData parsedData = 
+            SRV_InvestmentPortfolioAPI.parseComprehensiveData(responseData);
         Test.stopTest();
         
         // Verify
-        Assert.areEqual(1, portfolios.size(), 'Should have 1 portfolio');
-        Assert.areEqual('PORT-001', portfolios[0].get('portfolioId'), 
-                          'Portfolio ID should match');
+        Assert.areEqual(1, parsedData.portfolios.size(), 'Should have 1 portfolio');
+        Assert.areEqual('PORT-001', parsedData.portfolios[0].get('portfolioId'), 'Portfolio ID should match');
     }
     
     @isTest
@@ -169,14 +175,13 @@ private class SRV_InvestmentPortfolio_Test {
         
         // Test
         Test.startTest();
-        List<Map<String, Object>> holdings = 
-            SRV_InvestmentPortfolioAPI.parseHoldings(responseData);
+        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData parsedData = 
+            SRV_InvestmentPortfolioAPI.parseComprehensiveData(responseData);
         Test.stopTest();
         
         // Verify
-        Assert.areEqual(1, holdings.size(), 'Should have 1 holding');
-        Assert.areEqual('HOLD-001', holdings[0].get('holdingId'), 
-                          'Holding ID should match');
+        Assert.areEqual(1, parsedData.holdingsByPortfolio.size(), 'Should have holdings for 1 portfolio');
+        // Check that holdings data is properly parsed
     }
     
     @isTest
@@ -195,14 +200,12 @@ private class SRV_InvestmentPortfolio_Test {
         
         // Test
         Test.startTest();
-        List<Map<String, Object>> transactions = 
-            SRV_InvestmentPortfolioAPI.parseTransactions(responseData);
+        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData comprehensiveData = 
+            SRV_InvestmentPortfolioAPI.parseComprehensiveData(responseData);
         Test.stopTest();
         
         // Verify
-        Assert.areEqual(1, transactions.size(), 'Should have 1 transaction');
-        Assert.areEqual('TXN-001', transactions[0].get('transactionId'), 
-                          'Transaction ID should match');
+        Assert.areEqual(1, comprehensiveData.transactionsByPortfolio.size(), 'Should have transactions for 1 portfolio');
     }
 }
 

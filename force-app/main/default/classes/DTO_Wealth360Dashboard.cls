@@ -111,20 +111,25 @@ public with sharing class DTO_Wealth360Dashboard {
         
         public ApiResponse() {}
         
-        public static ApiResponse success(String message, Object data) {
-            ApiResponse response = new ApiResponse();
-            response.success = true;
-            response.message = message;
-            response.data = data;
-            return response;
+        public ApiResponse(Boolean success, String message, Object data, String errorCode) {
+            this.success = success;
+            this.message = message;
+            this.data = data;
+            this.errorCode = errorCode;
         }
         
-        public static ApiResponse error(String message, String errorCode) {
-            ApiResponse response = new ApiResponse();
-            response.success = false;
-            response.message = message;
-            response.errorCode = errorCode;
-            return response;
+        public ApiResponse withSuccess(String message, Object data) {
+            this.success = true;
+            this.message = message;
+            this.data = data;
+            return this;
+        }
+        
+        public ApiResponse withError(String message, String errorCode) {
+            this.success = false;
+            this.message = message;
+            this.errorCode = errorCode;
+            return this;
         }
     }
 }

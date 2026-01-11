@@ -41,8 +41,7 @@ private class Queueable_PortfolioSync_Test {
         
         // Verify external IDs are set
         for (FinServ__FinancialAccount__c fa : financialAccounts) {
-            Assert.areNotEqual(null, fa.ExternalPortfolioId__c, 
-                                 'External Portfolio ID should be set');
+            Assert.areNotEqual(null, fa.ExternalPortfolioId__c,  'External Portfolio ID should be set');
         }
     }
     
@@ -75,8 +74,7 @@ private class Queueable_PortfolioSync_Test {
         
         // Verify external IDs are set
         for (FinServ__FinancialHolding__c fh : holdings) {
-            Assert.areNotEqual(null, fh.ExternalHoldingId__c, 
-                                 'External Holding ID should be set');
+            Assert.areNotEqual(null, fh.ExternalHoldingId__c,  'External Holding ID should be set');
         }
     }
     
@@ -109,8 +107,7 @@ private class Queueable_PortfolioSync_Test {
         
         // Verify external IDs are set
         for (FinServ__FinancialAccountTransaction__c txn : transactions) {
-            Assert.areNotEqual(null, txn.ExternalTransactionId__c, 
-                                 'External Transaction ID should be set');
+            Assert.areNotEqual(null, txn.ExternalTransactionId__c,  'External Transaction ID should be set');
         }
     }
     
@@ -141,8 +138,7 @@ private class Queueable_PortfolioSync_Test {
         ];
         
         // Should only have one record with this external ID
-        Assert.areEqual(1, financialAccounts.size(), 
-                          'Should only have one record with external ID PORT-001');
+        Assert.areEqual(1, financialAccounts.size(), 'Should only have one record with external ID PORT-001');
     }
     
     @isTest
@@ -163,8 +159,6 @@ private class Queueable_PortfolioSync_Test {
         System.enqueueJob(syncJob);
         Test.stopTest();
         
-        // Verify no governor limit exceptions occurred
-        // This is implicit if test completes successfully
         Assert.isTrue(true, 'Bulk processing completed without governor limit exceptions');
     }
     

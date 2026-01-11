@@ -30,7 +30,6 @@ public without sharing class Queueable_PortfolioSync implements Queueable, Datab
         } catch (Exception e) {
             System.debug(LoggingLevel.ERROR, 'Error in Queueable_PortfolioSync: ' + e.getMessage());
             System.debug(LoggingLevel.ERROR, 'Stack trace: ' + e.getStackTraceString());
-            // In production, would log to custom error object or platform event
         }
     }
     
@@ -83,9 +82,9 @@ public without sharing class Queueable_PortfolioSync implements Queueable, Datab
                     if (comprehensiveData.transactionsByPortfolio.containsKey(externalPortfolioId)) {
                         List<Map<String, Object>> transactions = comprehensiveData.transactionsByPortfolio.get(externalPortfolioId);
                         for (Map<String, Object> transactionData : transactions) {
-                            FinServ__FinancialAccountTransaction__c transaction = 
+                            FinServ__FinancialAccountTransaction__c transactionRecord = 
                                 mapTransactionToFinancialAccountTransaction(transactionData, financialAccount.Id);
-                            transactionsToUpsert.add(transaction);
+                            transactionsToUpsert.add(transactionRecord);
                         }
                     }
                 }
@@ -179,14 +178,13 @@ public without sharing class Queueable_PortfolioSync implements Queueable, Datab
         
         for (FinServ__FinancialAccount__c fa : financialAccounts) {
             try {
-                SRV_InvestmentPortfolioAPI.APIResponse response = 
-                    SRV_InvestmentPortfolioAPI.getHoldings(fa.ExternalPortfolioId__c);
+                // Use comprehensive data approach since individual methods don't exist
+                SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData comprehensiveData = 
+                    SRV_InvestmentPortfolioAPI.getAllPortfolioDataForSync(fa.FinServ__PrimaryOwner__c);
                 
-                if (response.success) {
+                if (comprehensiveData != null && comprehensiveData.holdingsByPortfolio.containsKey(fa.ExternalPortfolioId__c)) {
                     List<Map<String, Object>> holdings = 
-                        SRV_InvestmentPortfolioAPI.parseHoldings(
-                            (Map<String, Object>)response.data
-                        );
+                        comprehensiveData.holdingsByPortfolio.get(fa.ExternalPortfolioId__c);
                     
                     for (Map<String, Object> holdingData : holdings) {
                         FinServ__FinancialHolding__c holding = 
@@ -237,16 +235,13 @@ public without sharing class Queueable_PortfolioSync implements Queueable, Datab
         
         for (FinServ__FinancialAccount__c fa : financialAccounts) {
             try {
-                SRV_InvestmentPortfolioAPI.APIResponse response = 
-                    SRV_InvestmentPortfolioAPI.getTransactions(
-                        fa.ExternalPortfolioId__c, startDate, endDate
-                    );
+                // Use comprehensive data approach since individual methods don't exist
+                SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData comprehensiveData = 
+                    SRV_InvestmentPortfolioAPI.getAllPortfolioDataForSync(fa.FinServ__PrimaryOwner__c);
                 
-                if (response.success) {
+                if (comprehensiveData != null && comprehensiveData.transactionsByPortfolio.containsKey(fa.ExternalPortfolioId__c)) {
                     List<Map<String, Object>> transactions = 
-                        SRV_InvestmentPortfolioAPI.parseTransactions(
-                            (Map<String, Object>)response.data
-                        );
+                        comprehensiveData.transactionsByPortfolio.get(fa.ExternalPortfolioId__c);
                     
                     for (Map<String, Object> txnData : transactions) {
                         FinServ__FinancialAccountTransaction__c txn = 
