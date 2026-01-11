@@ -45,7 +45,8 @@ public class TEST_DataFactory {
         Account acc = new Account(
             FirstName = 'Test',
             LastName = lastName,
-            PersonEmail = lastName.toLowerCase() + '@test.com'
+            PersonEmail = lastName.toLowerCase() + '@test.com',
+            ExternalClientId__c = 'ACC-001-DEMO' // Default test client ID to match Postman
         );
         
         if (doInsert) {

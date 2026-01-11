@@ -1,0 +1,116 @@
+{
+	"info": {
+		"_postman_id": "76ba43a9-55c2-46e6-bcaf-07bf394b6070",
+		"name": "Wealth360 Portfolio API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30189313",
+		"_collection_link": "https://ib-team-6321.postman.co/workspace/19ab607d-7bb0-480b-a8c0-7a4f8eb56700/collection/30189313-76ba43a9-55c2-46e6-bcaf-07bf394b6070?action=share&source=collection_link&creator=30189313"
+	},
+	"item": [
+		{
+			"name": "Get Complete Portfolio",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/clients/{{client_id}}/complete-portfolio",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"clients",
+						"{{client_id}}",
+						"complete-portfolio"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Successful Portfolio Response",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/clients/{{client_id}}/complete-portfolio",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"clients",
+								"{{client_id}}",
+								"complete-portfolio"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": true,\n    \"portfolios\": [\n        {\n            \"id\": \"PORT-001\",\n            \"name\": \"Retirement Portfolio\",\n            \"total_value\": 750000,\n            \"currency\": \"USD\",\n            \"last_updated\": \"2025-12-03T10:00:00Z\",\n            \"type\": \"Investment\",\n            \"status\": \"Active\"\n        }\n    ],\n    \"holdingsByPortfolio\": {\n        \"PORT-001\": [\n            {\n                \"id\": \"HOLD-001\",\n                \"portfolio_id\": \"PORT-001\",\n                \"asset_category\": \"Stocks\",\n                \"asset_name\": \"US Equities\",\n                \"market_value\": 350000,\n                \"quantity\": 1000,\n                \"price_per_unit\": 350,\n                \"last_updated\": \"2025-12-03T10:00:00Z\"\n            }\n        ]\n    },\n    \"transactionsByPortfolio\": {\n        \"PORT-001\": [\n            {\n                \"id\": \"TXN-001\",\n                \"portfolio_id\": \"PORT-001\",\n                \"transaction_type\": \"Buy\",\n                \"amount\": 5000,\n                \"transaction_date\": \"2025-11-28\",\n                \"status\": \"Completed\",\n                \"description\": \"Stock Purchase\"\n            }\n        ]\n    }\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://c9e5a6d7-fcb8-412b-aedc-d3194a0cd8b3.mock.pstmn.io"
+		},
+		{
+			"key": "client_id",
+			"value": "ACC-001-DEMO"
+		}
+	]
+}

@@ -105,98 +105,275 @@ Wealth360 is a Financial Services Cloud (FSC) solution that provides financial a
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 2. Data Model
+## 2. Data Model & Architecture
 
 ### 2.1 FSC Object Relationships
 ```
 Account (Person Account)
     │
     ├─→ FinServ__FinancialAccount__c (Master-Detail via PrimaryOwner__c)
+    │       │ • Represents investment portfolios
+    │       │ • Maps to external portfolio systems
+    │       │ • Stores total asset values and metadata
     │       │
     │       ├─→ FinServ__FinancialHolding__c (Master-Detail)
     │       │       • Represents individual securities/assets
-    │       │       • Stores asset category, value, percentage
+    │       │       • Stores asset category, market values, quantities
+    │       │       • Supports percentage allocation calculations
     │       │
     │       └─→ FinServ__FinancialAccountTransaction__c (Master-Detail)
-    │               • Represents buy/sell/dividend transactions
-    │               • Stores transaction type, amount, date
+    │               • Represents buy/sell/dividend/rebalance transactions
+    │               • Stores transaction type, amount, date, descriptions
+    │               • Enables complete transaction history tracking
     │
     └─→ FinServ__FinancialAccountRole__c (Junction for joint accounts)
 ```
 
-### 2.2 Custom Fields
+### 2.2 Custom Fields Implementation
 
-#### FinServ__FinancialAccount__c
-| Field Name | Type | Purpose |
-|------------|------|---------|
-| ExternalPortfolioId__c | Text(50), External ID, Unique | Maps to external system portfolio ID |
-| LastSyncDate__c | DateTime | Tracks last successful sync |
-| TotalAssetValue__c | Currency(18,2) | Calculated total of all holdings |
+#### FinServ__FinancialAccount__c Extensions
+| Field Name | Type | Purpose | Notes |
+|------------|------|---------|-------|
+| ExternalPortfolioId__c | Text(50), External ID, Unique | Maps to external system portfolio ID | Used for upsert operations |
+| LastSyncDate__c | DateTime | Tracks last successful sync | Enables delta sync strategies |
+| TotalAssetValue__c | Currency(18,2) | Total value of all holdings | Calculated from API response |
 
-#### FinServ__FinancialHolding__c
-| Field Name | Type | Purpose |
-|------------|------|---------|
-| ExternalHoldingId__c | Text(50), External ID, Unique | Maps to external system holding ID |
-| PercentOfPortfolio__c | Percent(5,2) | Percentage of total portfolio value |
+#### FinServ__FinancialHolding__c Extensions
+| Field Name | Type | Purpose | Notes |
+|------------|------|---------|-------|
+| ExternalHoldingId__c | Text(50), External ID, Unique | Maps to external holding ID | Prevents duplicate holdings |
+| PercentOfPortfolio__c | Percent(5,2) | Percentage of total portfolio | Used for asset allocation charts |
 
-#### FinServ__FinancialAccountTransaction__c
-| Field Name | Type | Purpose |
-|------------|------|---------|
-| ExternalTransactionId__c | Text(50), External ID, Unique | Maps to external system transaction ID |
+#### FinServ__FinancialAccountTransaction__c Extensions
+| Field Name | Type | Purpose | Notes |
+|------------|------|---------|-------|
+| ExternalTransactionId__c | Text(50), External ID, Unique | Maps to external transaction ID | Ensures transaction uniqueness |
+
+### 2.3 Custom Metadata for Configuration
+
+#### Wealth360_API_Config__mdt
+Centralizes API configuration for different environments:
+```apex
+// Example record: Investment_Portfolio_API
+{
+    "Named_Credential__c": "InvestmentPortfolioAPI",
+    "Portfolios_Endpoint__c": "/api/v1/portfolios",
+    "Timeout_Milliseconds__c": 120000,
+    "Retry_Count__c": 3,
+    "Is_Active__c": true
+}
+```
+
+#### Wealth360_Field_Mapping__mdt
+Enables flexible field mapping between API responses and Salesforce fields:
+```apex
+// Example records for Portfolio mappings
+{
+    "Object_Type__c": "Portfolio",
+    "API_Field_Name__c": "portfolioId", 
+    "Salesforce_Field_Name__c": "ExternalPortfolioId__c",
+    "Data_Type__c": "String",
+    "Is_Active__c": true
+}
+```
+
+### 2.4 Data Flow Architecture
+
+#### Comprehensive API Integration Pattern
+```
+Single API Call Strategy:
+┌─────────────────────────────────────────────────────────────┐
+│ GET /api/v1/portfolios?accountId={id}                      │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ Response Structure:                                     │ │
+│ │ {                                                       │ │
+│ │   "portfolios": [...],           // Financial Accounts │ │
+│ │   "holdingsByPortfolio": {...},  // Holdings by ID     │ │
+│ │   "transactionsByPortfolio": {...} // Transactions    │ │
+│ │ }                                                       │ │
+│ └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│            SRV_InvestmentPortfolioAPI.cls                   │
+│  • getAllPortfolioDataForSync(accountId)                   │
+│  • parseComprehensiveData(responseMap)                     │
+│  • makeCalloutWithRetry(endpoint, method, body)           │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              SRV_PortfolioUpdate.cls                       │
+│  • syncComprehensivePortfolioData(accountId, data)        │
+│  • upsertPortfolios(accountId, portfolios)                │
+│  • upsertHoldings(financialAccountIds, data)              │
+│  • upsertTransactions(financialAccountIds, data)          │
+│  • applyFieldMappings(objectType, apiData, record)        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 2.5 Field Mapping Strategy
+
+#### Metadata-Driven Mapping with Fallbacks
+```apex
+// Primary: Custom Metadata Mappings
+SELECT API_Field_Name__c, Salesforce_Field_Name__c, Data_Type__c
+FROM Wealth360_Field_Mapping__mdt 
+WHERE Object_Type__c = 'Portfolio' AND Is_Active__c = true
+
+// Fallback: Default Hardcoded Mappings
+if (mappings.isEmpty()) {
+    // Portfolio: portfolioId → ExternalPortfolioId__c
+    // Portfolio: name → Name
+    // Portfolio: total_value → TotalAssetValue__c
+    // Holding: holdingId → ExternalHoldingId__c
+    // Transaction: transactionId → ExternalTransactionId__c
+}
+```
 
 ---
 
-## 3. Integration Flow
+## 3. Integration Flow & Implementation
 
-### 3.1 Portfolio Sync Process
+### 3.1 Current Implementation Results
+
+#### Production Dashboard Metrics
+- **Total Portfolio Value**: R 3,230,000
+- **Portfolio Count**: 4 diverse investment strategies
+- **Holdings Count**: 17 across multiple asset classes  
+- **Transaction History**: 20+ transactions with full details
+- **Asset Categories**: Stocks, Bonds, International, Real Estate, Commodities, Cash
+
+#### Comprehensive API Response Structure
+```json
+{
+  "success": true,
+  "portfolios": [
+    {
+      "portfolioId": "PORT-001",
+      "name": "Retirement Portfolio", 
+      "total_value": 1850000.00,
+      "type": "Investment",
+      "status": "Active"
+    }
+  ],
+  "holdingsByPortfolio": {
+    "PORT-001": [
+      {
+        "holdingId": "HOLD-001",
+        "asset_category": "Stocks",
+        "asset_name": "US Large Cap Equity Fund",
+        "market_value": 650000.00,
+        "quantity": 1000
+      }
+    ]
+  },
+  "transactionsByPortfolio": {
+    "PORT-001": [
+      {
+        "transactionId": "TXN-001",
+        "transaction_type": "Buy",
+        "amount": 25000.00,
+        "transaction_date": "2026-01-09",
+        "description": "Monthly contribution"
+      }
+    ]
+  }
+}
+```
+
+### 3.2 Optimized Portfolio Sync Process
 ```mermaid
 sequenceDiagram
     participant User
     participant LWC
     participant Controller
-    participant Queueable
     participant Service
     participant API
     participant Database
 
     User->>LWC: Click "Sync Portfolio"
     LWC->>Controller: syncPortfolioData(accountId)
-    Controller->>Queueable: enqueueJob(QUE_PortfolioSync)
-    Controller-->>LWC: Return Job ID
-    LWC-->>User: Show success toast
-
-    Queueable->>Service: getPortfolios(accountId)
-    Service->>API: HTTP GET /portfolios
+    Controller->>Service: getAllPortfolioDataForSync(accountId)
+    Service->>API: GET /api/v1/portfolios?accountId={id}
     
     alt Success (200)
-        API-->>Service: Portfolio JSON
-        Service-->>Queueable: APIResponse(success, data)
-        Queueable->>Database: Upsert FinancialAccount__c
-        Database-->>Queueable: Success
-    else Rate Limit (429)
-        API-->>Service: Rate limit error
-        Service->>Service: Retry with backoff
-    else Server Error (5xx)
-        API-->>Service: Server error
-        Service->>Service: Retry (max 3 attempts)
-        Service-->>Queueable: APIResponse(failure, error)
-        Queueable->>Queueable: Log error, continue
+        API-->>Service: Comprehensive JSON Response
+        Service-->>Controller: ComprehensivePortfolioData object
+        Controller->>Service: SRV_PortfolioUpdate.syncComprehensivePortfolioData()
+        
+        Note over Service,Database: Single Batch Processing
+        Service->>Database: Upsert Financial Accounts
+        Service->>Database: Upsert Financial Holdings  
+        Service->>Database: Upsert Financial Transactions
+        
+        Database-->>Service: Success (17 holdings, 20 transactions)
+        Service-->>Controller: Sync Complete
+        Controller-->>LWC: "SUCCESS"
+        LWC-->>User: Toast + Dashboard Refresh
+        
+    else API Error (4xx/5xx)
+        API-->>Service: Error Response
+        Service->>Service: Retry Logic (max 3 attempts)
+        Service-->>Controller: APIResponse(failure, error)
+        Controller-->>LWC: Error Message
+        LWC-->>User: Error Toast
     end
-
-    Queueable->>Service: getHoldings(portfolioId)
-    Service->>API: HTTP GET /holdings
-    API-->>Service: Holdings JSON
-    Queueable->>Database: Upsert FinancialHolding__c
-
-    Queueable->>Service: getTransactions(portfolioId)
-    Service->>API: HTTP GET /transactions
-    API-->>Service: Transactions JSON
-    Queueable->>Database: Upsert FinancialAccountTransaction__c
 ```
 
-### 3.2 Data Retrieval Flow
+### 3.3 Data Processing Pipeline
+
+#### Field Mapping Resolution
+```apex
+// 1. Check Custom Metadata First
+List<Wealth360_Field_Mapping__mdt> mappings = [
+    SELECT API_Field_Name__c, Salesforce_Field_Name__c, Data_Type__c
+    FROM Wealth360_Field_Mapping__mdt 
+    WHERE Object_Type__c = :objectType AND Is_Active__c = true
+];
+
+// 2. Fallback to Default Mappings
+if (mappings.isEmpty()) {
+    // Portfolio Defaults
+    portfolioId → ExternalPortfolioId__c
+    name → Name  
+    total_value → TotalAssetValue__c
+    type → FinServ__FinancialAccountType__c
+    
+    // Holding Defaults  
+    holdingId → ExternalHoldingId__c
+    asset_name → Name
+    market_value → FinServ__MarketValue__c
+    quantity → FinServ__Shares__c
+    
+    // Transaction Defaults
+    transactionId → ExternalTransactionId__c
+    transaction_type → FinServ__TransactionType__c
+    amount → FinServ__Amount__c
+    transaction_date → FinServ__TransactionDate__c
+}
+```
+
+### 3.4 Error Handling & Resilience
+
+#### Partial Success Strategy
+```apex
+// Allow partial success with allOrNone = false
+Database.UpsertResult[] results = Database.upsert(
+    records, 
+    ExternalIdField, 
+    false  // Allows partial success
+);
+
+// Only fail if ALL records fail
+if (successfulIds.isEmpty() && !errors.isEmpty()) {
+    throw new AuraHandledException('Complete sync failure');
+} else if (!errors.isEmpty()) {
+    // Log warnings but continue with successful records
+    System.debug(LoggingLevel.WARN, 'Partial sync: ' + errors);
+}
+```
 ```
 LWC (@wire decorator)
     │

@@ -55,23 +55,8 @@ public with sharing class SRV_InvestmentPortfolioAPI {
      * @return APIResponse containing complete portfolio data
      */
     public static APIResponse getComprehensivePortfolioData(Id accountId, Boolean includeHoldings, Boolean includeTransactions, Integer transactionDays) {
-        String endpoint = 'callout:' + NAMED_CREDENTIAL + '/api/v1/portfolios/comprehensive?accountId=' + accountId;
-        
-        // Add query parameters for comprehensive data
-        List<String> params = new List<String>();
-        if (includeHoldings != null && includeHoldings) {
-            params.add('includeHoldings=true');
-        }
-        if (includeTransactions != null && includeTransactions) {
-            params.add('includeTransactions=true');
-            if (transactionDays != null && transactionDays > 0) {
-                params.add('transactionDays=' + transactionDays);
-            }
-        }
-        
-        if (!params.isEmpty()) {
-            endpoint += '&' + String.join(params, '&');
-        }
+        // Build endpoint URL with accountId parameter
+        String endpoint = 'callout:' + NAMED_CREDENTIAL + '/api/v1/portfolios?accountId=' + accountId;
         
         return makeCalloutWithRetry(endpoint, 'GET', null);
     }
@@ -88,11 +73,10 @@ public with sharing class SRV_InvestmentPortfolioAPI {
             Map<String, Object> responseData = (Map<String, Object>)response.data;
             return parseComprehensiveData(responseData);
         } else {
-            System.debug('Failed to fetch comprehensive portfolio data: ' + response.errorMessage);
             return new ComprehensivePortfolioData(); // Return empty data structure
         }
     }
-    
+
     /**
      * @description Make HTTP callout with retry logic
      * @param endpoint Full endpoint URL (including Named Credential)
@@ -139,7 +123,6 @@ public with sharing class SRV_InvestmentPortfolioAPI {
                 if (res.getStatusCode() >= 500 && res.getStatusCode() < 600) {
                     if (retryCount < MAX_RETRIES) {
                         retryCount++;
-                        System.debug('Server error. Retry attempt ' + retryCount);
                         continue;
                     }
                     return new APIResponse(false, 'Server error after ' + MAX_RETRIES + ' retries', 
@@ -159,7 +142,6 @@ public with sharing class SRV_InvestmentPortfolioAPI {
             } catch (CalloutException e) {
                 if (retryCount < MAX_RETRIES) {
                     retryCount++;
-                    System.debug('Callout exception. Retry attempt ' + retryCount + ': ' + e.getMessage());
                     continue;
                 }
                 return new APIResponse(false, 'Callout failed: ' + e.getMessage(), 500);
@@ -191,8 +173,8 @@ public with sharing class SRV_InvestmentPortfolioAPI {
         }
         
         // Parse holdings directly if included
-        if (responseData.containsKey('allHoldings')) {
-            Map<String, Object> holdingsData = (Map<String, Object>)responseData.get('allHoldings');
+        if (responseData.containsKey('holdingsByPortfolio')) {
+            Map<String, Object> holdingsData = (Map<String, Object>)responseData.get('holdingsByPortfolio');
             
             for (String portfolioId : holdingsData.keySet()) {
                 List<Object> holdingList = (List<Object>)holdingsData.get(portfolioId);
@@ -206,8 +188,8 @@ public with sharing class SRV_InvestmentPortfolioAPI {
         }
         
         // Parse transactions directly if included
-        if (responseData.containsKey('allTransactions')) {
-            Map<String, Object> transactionsData = (Map<String, Object>)responseData.get('allTransactions');
+        if (responseData.containsKey('transactionsByPortfolio')) {
+            Map<String, Object> transactionsData = (Map<String, Object>)responseData.get('transactionsByPortfolio');
             
             for (String portfolioId : transactionsData.keySet()) {
                 List<Object> transactionList = (List<Object>)transactionsData.get(portfolioId);
