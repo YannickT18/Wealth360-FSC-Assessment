@@ -18,15 +18,19 @@ public with sharing class SRV_InvestmentPortfolioAPI {
         public Object data;
         public Integer statusCode;
         
+        // Constructor for success response
         public APIResponse(Boolean success, Object data, Integer statusCode) {
             this.success = success;
             this.data = data;
+            this.errorMessage = null;
             this.statusCode = statusCode;
         }
         
+        // Constructor for error response
         public APIResponse(Boolean success, String errorMessage, Integer statusCode) {
             this.success = success;
             this.errorMessage = errorMessage;
+            this.data = null;
             this.statusCode = statusCode;
         }
     }
@@ -111,7 +115,6 @@ public with sharing class SRV_InvestmentPortfolioAPI {
                         retryCount++;
                         // Exponential backoff
                         Integer delay = retryDelay * (Integer)Math.pow(2, retryCount - 1);
-                        // In real implementation, would use Queueable for async retry
                         // For now, log and return error
                         System.debug('Rate limited. Retry attempt ' + retryCount + ' after ' + delay + 'ms');
                         continue;

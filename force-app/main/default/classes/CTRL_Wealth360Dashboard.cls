@@ -158,49 +158,26 @@ public with sharing class CTRL_Wealth360Dashboard {
     }
     
     /**
-     * @description Trigger portfolio sync for an account
+     * @description Trigger portfolio sync for an account (simplified with proper separation of concerns)
      * @param accountId Account ID
      * @return Success message
      */
     @AuraEnabled
     public static String syncPortfolioData(Id accountId) {
         try {
-            // Use real API integration with Named Credential
-            syncPortfolioDataFromAPI(accountId);
-            return 'SUCCESS';
+            // Single method call handles API + business logic
+            SRV_InvestmentPortfolio.SyncResult result = SRV_InvestmentPortfolio.fetchAndSyncPortfolioData(accountId);
+            
+            if (result.success) {
+                return 'SUCCESS: ' + result.portfoliosSynced + ' portfolios, ' + 
+                       result.holdingsSynced + ' holdings, ' + result.transactionsSynced + ' transactions synced';
+            } else {
+                throw new AuraHandledException(result.message);
+            }
             
         } catch (Exception e) {
             throw new AuraHandledException('Error syncing portfolio data: ' + e.getMessage());
         }
-    }
-    
-    /**
-     * @description Sync portfolio data from external API using Named Credential (Optimized - Single API Call)
-     * @param accountId Account ID
-     */
-    private static void syncPortfolioDataFromAPI(Id accountId) {
-        // Get comprehensive data in one API call
-        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData comprehensiveData = 
-            fetchComprehensivePortfolioData(accountId);
-        
-        // Delegate to service class for all data processing
-        SRV_PortfolioUpdate.syncComprehensivePortfolioData(accountId, comprehensiveData);
-    }
-    
-    /**
-     * @description Fetch comprehensive portfolio data and validate response
-     * @param accountId Account ID
-     * @return ComprehensivePortfolioData
-     */
-    private static SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData fetchComprehensivePortfolioData(Id accountId) {
-        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData comprehensiveData = 
-            SRV_InvestmentPortfolioAPI.getAllPortfolioDataForSync(accountId);
-        
-        if (comprehensiveData.portfolios.isEmpty()) {
-            throw new AuraHandledException('No portfolios returned from API');
-        }
-        
-        return comprehensiveData;
     }
     
     /**

@@ -4,17 +4,17 @@
  * @date 22-11-2025
  */
 @isTest
-public class Mock_InvestmentPortfolioAPI implements HttpCalloutMock {
+public class MOCK_InvestmentPortfolioAPI implements HttpCalloutMock {
     
     private Integer statusCode;
     private String responseType;
     
-    public Mock_InvestmentPortfolioAPI() {
+    public MOCK_InvestmentPortfolioAPI() {
         this.statusCode = 200;
         this.responseType = 'portfolios';
     }
     
-    public Mock_InvestmentPortfolioAPI(Integer statusCode, String responseType) {
+    public MOCK_InvestmentPortfolioAPI(Integer statusCode, String responseType) {
         this.statusCode = statusCode;
         this.responseType = responseType;
     }
@@ -57,66 +57,67 @@ public class Mock_InvestmentPortfolioAPI implements HttpCalloutMock {
         Map<String, Object> response = new Map<String, Object>{
             'success' => true,
             'portfolios' => new List<Object>{
-                createPortfolioData('PORT-001', 'Retirement Portfolio', 1850000.00),
-                createPortfolioData('PORT-002', 'Growth Investment Account', 675000.00),
-                createPortfolioData('PORT-003', 'Education Savings Fund', 225000.00),
-                createPortfolioData('PORT-004', 'Conservative Income Portfolio', 480000.00)
+                createPortfolioData('PORT-201', 'Executive Investment Portfolio', 2450000.00),
+                createPortfolioData('PORT-202', 'Tech Startup Fund', 890000.00),
+                createPortfolioData('PORT-203', 'Real Estate Investment Trust', 1200000.00),
+                createPortfolioData('PORT-204', 'International Diversified Fund', 650000.00)
             },
             'holdingsByPortfolio' => new Map<String, Object>{
-                'PORT-001' => new List<Object>{
-                    createHoldingData('HOLD-001', 'PORT-001', 'Stocks', 'US Large Cap Equity Fund', 650000.00, 35.14),
-                    createHoldingData('HOLD-002', 'PORT-001', 'Bonds', 'Government Bond Index', 425000.00, 22.97),
-                    createHoldingData('HOLD-003', 'PORT-001', 'International', 'Emerging Markets Fund', 280000.00, 15.14),
-                    createHoldingData('HOLD-004', 'PORT-001', 'Real Estate', 'REIT Portfolio', 235000.00, 12.70),
-                    createHoldingData('HOLD-005', 'PORT-001', 'Commodities', 'Gold ETF', 185000.00, 10.00),
-                    createHoldingData('HOLD-006', 'PORT-001', 'Cash', 'Money Market Fund', 75000.00, 4.05)
+                'PORT-201' => new List<Object>{
+                    createHoldingData('HOLD-201', 'PORT-201', 'Stocks', 'Microsoft Corporation', 800000.00, 32.65),
+                    createHoldingData('HOLD-202', 'PORT-201', 'Stocks', 'Apple Inc', 650000.00, 26.53),
+                    createHoldingData('HOLD-203', 'PORT-201', 'Bonds', 'Corporate High Yield', 500000.00, 20.41),
+                    createHoldingData('HOLD-204', 'PORT-201', 'International', 'Asian Growth Fund', 300000.00, 12.24),
+                    createHoldingData('HOLD-205', 'PORT-201', 'Commodities', 'Silver Futures', 150000.00, 6.12),
+                    createHoldingData('HOLD-206', 'PORT-201', 'Cash', 'Premium Money Market', 50000.00, 2.04)
                 },
-                'PORT-002' => new List<Object>{
-                    createHoldingData('HOLD-007', 'PORT-002', 'Stocks', 'Technology Growth Fund', 285000.00, 42.22),
-                    createHoldingData('HOLD-008', 'PORT-002', 'Stocks', 'Small Cap Value Fund', 195000.00, 28.89),
-                    createHoldingData('HOLD-009', 'PORT-002', 'International', 'European Equity Fund', 125000.00, 18.52),
-                    createHoldingData('HOLD-010', 'PORT-002', 'Cash', 'High Yield Savings', 70000.00, 10.37)
+                'PORT-202' => new List<Object>{
+                    createHoldingData('HOLD-207', 'PORT-202', 'Stocks', 'NVIDIA Corporation', 350000.00, 39.33),
+                    createHoldingData('HOLD-208', 'PORT-202', 'Stocks', 'Tesla Inc', 275000.00, 30.90),
+                    createHoldingData('HOLD-209', 'PORT-202', 'Stocks', 'Amazon Web Services ETF', 165000.00, 18.54),
+                    createHoldingData('HOLD-210', 'PORT-202', 'Cash', 'Tech Sector Cash Reserve', 100000.00, 11.24)
                 },
-                'PORT-003' => new List<Object>{
-                    createHoldingData('HOLD-011', 'PORT-003', 'Stocks', 'Education Target Date Fund', 135000.00, 60.00),
-                    createHoldingData('HOLD-012', 'PORT-003', 'Bonds', 'Corporate Bond Fund', 65000.00, 28.89),
-                    createHoldingData('HOLD-013', 'PORT-003', 'Cash', 'Stable Value Fund', 25000.00, 11.11)
+                'PORT-203' => new List<Object>{
+                    createHoldingData('HOLD-211', 'PORT-203', 'Real Estate', 'Commercial Property REIT', 500000.00, 41.67),
+                    createHoldingData('HOLD-212', 'PORT-203', 'Real Estate', 'Residential Property Fund', 400000.00, 33.33),
+                    createHoldingData('HOLD-213', 'PORT-203', 'Real Estate', 'Industrial REIT', 200000.00, 16.67),
+                    createHoldingData('HOLD-214', 'PORT-203', 'Cash', 'Property Investment Cash', 100000.00, 8.33)
                 },
-                'PORT-004' => new List<Object>{
-                    createHoldingData('HOLD-014', 'PORT-004', 'Bonds', 'Treasury Income Fund', 215000.00, 44.79),
-                    createHoldingData('HOLD-015', 'PORT-004', 'Dividend', 'Dividend Growth Fund', 165000.00, 34.38),
-                    createHoldingData('HOLD-016', 'PORT-004', 'Real Estate', 'Income REIT Fund', 75000.00, 15.63),
-                    createHoldingData('HOLD-017', 'PORT-004', 'Cash', 'Certificate of Deposit', 25000.00, 5.21)
+                'PORT-204' => new List<Object>{
+                    createHoldingData('HOLD-215', 'PORT-204', 'International', 'European Blue Chip Fund', 200000.00, 30.77),
+                    createHoldingData('HOLD-216', 'PORT-204', 'International', 'Canadian Resource Fund', 180000.00, 27.69),
+                    createHoldingData('HOLD-217', 'PORT-204', 'International', 'Emerging Markets Bond', 150000.00, 23.08),
+                    createHoldingData('HOLD-218', 'PORT-204', 'Dividend', 'Global Dividend Aristocrats', 120000.00, 18.46)
                 }
             },
             'transactionsByPortfolio' => new Map<String, Object>{
-                'PORT-001' => new List<Object>{
-                    createTransactionData('TXN-001', 'PORT-001', 'Buy', 25000.00, System.today().addDays(-3), 'Monthly contribution - Technology Fund'),
-                    createTransactionData('TXN-002', 'PORT-001', 'Dividend', 1250.00, System.today().addDays(-7), 'Quarterly dividend payment'),
-                    createTransactionData('TXN-003', 'PORT-001', 'Rebalance', -15000.00, System.today().addDays(-14), 'Portfolio rebalancing - sold bonds'),
-                    createTransactionData('TXN-004', 'PORT-001', 'Rebalance', 15000.00, System.today().addDays(-14), 'Portfolio rebalancing - bought equities'),
-                    createTransactionData('TXN-005', 'PORT-001', 'Buy', 30000.00, System.today().addDays(-28), 'Annual bonus investment')
+                'PORT-201' => new List<Object>{
+                    createTransactionData('TXN-201', 'PORT-201', 'Buy', 45000.00, System.today().addDays(-1), 'Executive bonus allocation'),
+                    createTransactionData('TXN-202', 'PORT-201', 'Dividend', 3200.00, System.today().addDays(-5), 'Microsoft quarterly dividend'),
+                    createTransactionData('TXN-203', 'PORT-201', 'Sell', -25000.00, System.today().addDays(-12), 'Portfolio optimization'),
+                    createTransactionData('TXN-204', 'PORT-201', 'Buy', 80000.00, System.today().addDays(-18), 'Apple stock purchase'),
+                    createTransactionData('TXN-205', 'PORT-201', 'Interest', 2150.00, System.today().addDays(-25), 'Bond interest payment')
                 },
-                'PORT-002' => new List<Object>{
-                    createTransactionData('TXN-006', 'PORT-002', 'Buy', 15000.00, System.today().addDays(-2), 'Growth fund purchase'),
-                    createTransactionData('TXN-007', 'PORT-002', 'Sell', -8500.00, System.today().addDays(-9), 'Partial profit taking'),
-                    createTransactionData('TXN-008', 'PORT-002', 'Dividend', 875.00, System.today().addDays(-15), 'Technology dividend'),
-                    createTransactionData('TXN-009', 'PORT-002', 'Buy', 12000.00, System.today().addDays(-21), 'Small cap value addition'),
-                    createTransactionData('TXN-010', 'PORT-002', 'Buy', 20000.00, System.today().addDays(-35), 'International diversification')
+                'PORT-202' => new List<Object>{
+                    createTransactionData('TXN-206', 'PORT-202', 'Buy', 35000.00, System.today().addDays(-2), 'NVIDIA position increase'),
+                    createTransactionData('TXN-207', 'PORT-202', 'Sell', -15000.00, System.today().addDays(-8), 'Tesla profit taking'),
+                    createTransactionData('TXN-208', 'PORT-202', 'Buy', 50000.00, System.today().addDays(-15), 'AWS ETF initial purchase'),
+                    createTransactionData('TXN-209', 'PORT-202', 'Dividend', 750.00, System.today().addDays(-20), 'Technology dividend'),
+                    createTransactionData('TXN-210', 'PORT-202', 'Buy', 25000.00, System.today().addDays(-30), 'Tech sector expansion')
                 },
-                'PORT-003' => new List<Object>{
-                    createTransactionData('TXN-011', 'PORT-003', 'Buy', 5000.00, System.today().addDays(-1), 'Monthly education savings'),
-                    createTransactionData('TXN-012', 'PORT-003', 'Buy', 5000.00, System.today().addDays(-32), 'Monthly education savings'),
-                    createTransactionData('TXN-013', 'PORT-003', 'Interest', 125.00, System.today().addDays(-30), 'Savings account interest'),
-                    createTransactionData('TXN-014', 'PORT-003', 'Buy', 10000.00, System.today().addDays(-45), 'Birthday gift contribution'),
-                    createTransactionData('TXN-015', 'PORT-003', 'Buy', 5000.00, System.today().addDays(-63), 'Monthly education savings')
+                'PORT-203' => new List<Object>{
+                    createTransactionData('TXN-211', 'PORT-203', 'Buy', 60000.00, System.today().addDays(-3), 'Commercial REIT expansion'),
+                    createTransactionData('TXN-212', 'PORT-203', 'Dividend', 4100.00, System.today().addDays(-7), 'Monthly REIT distribution'),
+                    createTransactionData('TXN-213', 'PORT-203', 'Reinvest', 4100.00, System.today().addDays(-7), 'Dividend reinvestment'),
+                    createTransactionData('TXN-214', 'PORT-203', 'Buy', 40000.00, System.today().addDays(-14), 'Industrial property fund'),
+                    createTransactionData('TXN-215', 'PORT-203', 'Interest', 850.00, System.today().addDays(-28), 'Property loan interest')
                 },
-                'PORT-004' => new List<Object>{
-                    createTransactionData('TXN-016', 'PORT-004', 'Dividend', 2100.00, System.today().addDays(-5), 'Quarterly income distribution'),
-                    createTransactionData('TXN-017', 'PORT-004', 'Interest', 650.00, System.today().addDays(-15), 'Bond coupon payment'),
-                    createTransactionData('TXN-018', 'PORT-004', 'Buy', 8000.00, System.today().addDays(-22), 'Additional REIT investment'),
-                    createTransactionData('TXN-019', 'PORT-004', 'Dividend', 1950.00, System.today().addDays(-35), 'Monthly dividend income'),
-                    createTransactionData('TXN-020', 'PORT-004', 'Reinvest', 1200.00, System.today().addDays(-42), 'Dividend reinvestment')
+                'PORT-204' => new List<Object>{
+                    createTransactionData('TXN-216', 'PORT-204', 'Buy', 22000.00, System.today().addDays(-4), 'European fund allocation'),
+                    createTransactionData('TXN-217', 'PORT-204', 'Buy', 18000.00, System.today().addDays(-10), 'Canadian resource investment'),
+                    createTransactionData('TXN-218', 'PORT-204', 'Dividend', 1800.00, System.today().addDays(-16), 'Global dividend payment'),
+                    createTransactionData('TXN-219', 'PORT-204', 'Interest', 925.00, System.today().addDays(-22), 'Emerging markets bond'),
+                    createTransactionData('TXN-220', 'PORT-204', 'Rebalance', 15000.00, System.today().addDays(-35), 'International rebalancing')
                 }
             }
         };
@@ -124,40 +125,7 @@ public class Mock_InvestmentPortfolioAPI implements HttpCalloutMock {
     }
     
     private String getCompletePortfolioResponse() {
-        Map<String, Object> response = new Map<String, Object>{
-            'success' => true,
-            'portfolios' => new List<Object>{
-                createPortfolioData('PORT-001', 'Retirement Portfolio', 750000.00)
-            },
-            'holdingsByPortfolio' => new Map<String, Object>{
-                'PORT-001' => new List<Object>{
-                    new Map<String, Object>{
-                        'holdingId' => 'HOLD-001',
-                        'portfolio_id' => 'PORT-001',
-                        'asset_category' => 'Stocks',
-                        'asset_name' => 'US Equities',
-                        'market_value' => 350000.00,
-                        'quantity' => 1000,
-                        'price_per_unit' => 350.00,
-                        'last_updated' => '2025-12-03T10:00:00Z'
-                    }
-                }
-            },
-            'transactionsByPortfolio' => new Map<String, Object>{
-                'PORT-001' => new List<Object>{
-                    new Map<String, Object>{
-                        'transactionId' => 'TXN-001',
-                        'portfolio_id' => 'PORT-001',
-                        'transaction_type' => 'Buy',
-                        'amount' => 5000.00,
-                        'transaction_date' => '2025-11-28',
-                        'status' => 'Completed',
-                        'description' => 'Stock Purchase'
-                    }
-                }
-            }
-        };
-        return JSON.serialize(response);
+        return getPortfoliosResponse(); // Use the comprehensive data for complete portfolio response
     }
     
     private String getSinglePortfolioResponse() {

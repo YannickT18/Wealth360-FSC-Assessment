@@ -1,12 +1,69 @@
 /**
- * @description Data Transfer Object (DTO) classes for Wealth360 Dashboard
- * @author Wealth360 Team
- * @date 2026
- * 
- * Contains all data transfer objects used by CTRL_Wealth360Dashboard
+ * @description DTO for Wealth360 Dashboard API response matching actual payload structure
+ * @author Yannick Kayombo 
+ * @date November 2025
  */
 public with sharing class DTO_Wealth360Dashboard {
     
+    @AuraEnabled public Boolean success { get; set; }
+    @AuraEnabled public List<Portfolio> portfolios { get; set; }
+    @AuraEnabled public Map<String, List<Holding>> holdingsByPortfolio { get; set; }
+    @AuraEnabled public Map<String, List<TransactionData>> transactionsByPortfolio { get; set; }
+
+    /**
+     * @description Portfolio information matching the API response
+     */
+    public class Portfolio {
+        @AuraEnabled public String portfolioId { get; set; }
+        @AuraEnabled public String name { get; set; }
+        @AuraEnabled public Decimal total_value { get; set; }
+        @AuraEnabled public String currency { get; set; }
+        @AuraEnabled public String type { get; set; }
+        @AuraEnabled public String status { get; set; }
+        @AuraEnabled public String lastUpdated { get; set; }
+    }
+
+    /**
+     * @description Holding information for each portfolio
+     */
+    public class Holding {
+        @AuraEnabled public String holdingId { get; set; }
+        @AuraEnabled public String portfolio_id { get; set; }
+        @AuraEnabled public String asset_category { get; set; }
+        @AuraEnabled public String asset_name { get; set; }
+        @AuraEnabled public Decimal market_value { get; set; }
+        @AuraEnabled public Integer quantity { get; set; }
+        @AuraEnabled public Decimal price_per_unit { get; set; }
+        @AuraEnabled public String last_updated { get; set; }
+    }
+    
+    /**
+     * @description Transaction data for each portfolio
+     */
+    public class TransactionData {
+        @AuraEnabled public String transactionId { get; set; }
+        @AuraEnabled public String portfolio_id { get; set; }
+        @AuraEnabled public String transaction_type { get; set; }
+        @AuraEnabled public Decimal amount { get; set; }
+        @AuraEnabled public String transaction_date { get; set; }
+        @AuraEnabled public String status { get; set; }
+        @AuraEnabled public String description { get; set; }
+        
+        public TransactionData() {}
+        
+        // Constructor for backward compatibility with Financial Services objects
+        public TransactionData(FinServ__FinancialAccountTransaction__c txn) {
+            this.transactionId = txn.Id;
+            this.transaction_type = txn.FinServ__TransactionType__c;
+            this.amount = txn.FinServ__Amount__c;
+            this.transaction_date = txn.FinServ__TransactionDate__c != null ? 
+                txn.FinServ__TransactionDate__c.format() : null;
+            this.status = txn.FinServ__TransactionStatus__c;
+            this.description = txn.FinServ__Description__c;
+            this.portfolio_id = txn.FinServ__FinancialAccount__c;
+        }
+    }
+
     /**
      * @description Asset allocation data for pie charts and portfolio breakdowns
      */
@@ -23,35 +80,7 @@ public with sharing class DTO_Wealth360Dashboard {
             this.percentage = percentage;
         }
     }
-    
-    /**
-     * @description Transaction data for recent transactions display
-     */
-    public class TransactionData {
-        @AuraEnabled public String id { get; set; }
-        @AuraEnabled public String name { get; set; }
-        @AuraEnabled public String type { get; set; }
-        @AuraEnabled public Decimal amount { get; set; }
-        @AuraEnabled public Date transactionDate { get; set; }
-        @AuraEnabled public String status { get; set; }
-        @AuraEnabled public String description { get; set; }
-        @AuraEnabled public String accountName { get; set; }
-        
-        public TransactionData() {}
-        
-        public TransactionData(FinServ__FinancialAccountTransaction__c txn) {
-            this.id = txn.Id;
-            this.name = txn.Name;
-            this.type = txn.FinServ__TransactionType__c;
-            this.amount = txn.FinServ__Amount__c;
-            this.transactionDate = txn.FinServ__TransactionDate__c != null ? 
-                txn.FinServ__TransactionDate__c.date() : null;
-            this.status = txn.FinServ__TransactionStatus__c;
-            this.description = txn.FinServ__Description__c;
-            this.accountName = txn.FinServ__FinancialAccount__r?.Name;
-        }
-    }
-    
+
     /**
      * @description Portfolio summary statistics for dashboard overview
      */
@@ -67,36 +96,6 @@ public with sharing class DTO_Wealth360Dashboard {
             this.holdingsCount = 0;
             this.totalValue = 0;
             this.status = 'Ready';
-        }
-    }
-    
-    /**
-     * @description Portfolio performance data
-     */
-    public class PortfolioPerformance {
-        @AuraEnabled public String portfolioName { get; set; }
-        @AuraEnabled public Decimal currentValue { get; set; }
-        @AuraEnabled public Decimal previousValue { get; set; }
-        @AuraEnabled public Decimal changeAmount { get; set; }
-        @AuraEnabled public Decimal changePercentage { get; set; }
-        @AuraEnabled public String trend { get; set; } // 'up', 'down', 'neutral'
-        
-        public PortfolioPerformance() {}
-        
-        public PortfolioPerformance(String name, Decimal current, Decimal previous) {
-            this.portfolioName = name;
-            this.currentValue = current;
-            this.previousValue = previous;
-            
-            if (current != null && previous != null && previous != 0) {
-                this.changeAmount = current - previous;
-                this.changePercentage = ((current - previous) / previous * 100).setScale(2);
-                this.trend = changeAmount > 0 ? 'up' : changeAmount < 0 ? 'down' : 'neutral';
-            } else {
-                this.changeAmount = 0;
-                this.changePercentage = 0;
-                this.trend = 'neutral';
-            }
         }
     }
     

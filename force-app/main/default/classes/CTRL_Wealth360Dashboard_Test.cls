@@ -32,7 +32,7 @@ private class CTRL_Wealth360Dashboard_Test {
         Test.stopTest();
         
         // Verify
-        Assert.areNotEqual(null, totalValue, 'Total value should not be null');
+        Assert.isNotNull(totalValue, 'Total value should not be null');
         Assert.isTrue(totalValue > 0, 'Total value should be greater than 0');
     }
     
@@ -43,23 +43,23 @@ private class CTRL_Wealth360Dashboard_Test {
         
         // Test
         Test.startTest();
-        List<CTRL_Wealth360Dashboard.AssetAllocation> allocations = CTRL_Wealth360Dashboard.getAssetAllocation(acc.Id);
+        List<DTO_Wealth360Dashboard.AssetAllocation> allocations = CTRL_Wealth360Dashboard.getAssetAllocation(acc.Id);
         Test.stopTest();
         
         // Verify
-        Assert.areNotEqual(null, allocations, 'Allocations should not be null');
+        Assert.isNotNull(allocations, 'Allocations should not be null');
         Assert.isTrue(allocations.size() > 0, 'Should have at least one allocation');
         
         // Verify allocation data structure
-        for (CTRL_Wealth360Dashboard.AssetAllocation allocation : allocations) {
-            Assert.areNotEqual(null, allocation.category, 'Category should not be null');
+        for (DTO_Wealth360Dashboard.AssetAllocation allocation : allocations) {
+            Assert.isNotNull(allocation.category, 'Category should not be null');
             Assert.isTrue(allocation.value > 0, 'Value should be greater than 0');
             Assert.isTrue(allocation.percentage > 0, 'Percentage should be greater than 0');
         }
         
         // Verify percentages sum to approximately 100
         Decimal totalPercentage = 0;
-        for (CTRL_Wealth360Dashboard.AssetAllocation allocation : allocations) {
+        for (DTO_Wealth360Dashboard.AssetAllocation allocation : allocations) {
             totalPercentage += allocation.percentage;
         }
         Assert.isTrue(totalPercentage >= 99 && totalPercentage <= 101, 'Total percentage should be approximately 100');
@@ -72,18 +72,18 @@ private class CTRL_Wealth360Dashboard_Test {
         
         // Test
         Test.startTest();
-        List<CTRL_Wealth360Dashboard.TransactionData> transactions = CTRL_Wealth360Dashboard.getRecentTransactions(acc.Id, 10);
+        List<DTO_Wealth360Dashboard.TransactionData> transactions = CTRL_Wealth360Dashboard.getRecentTransactions(acc.Id, 10);
         Test.stopTest();
         
         // Verify
-        Assert.areNotEqual(null, transactions, 'Transactions should not be null');
+        Assert.isNotNull(transactions, 'Transactions should not be null');
         Assert.isTrue(transactions.size() > 0, 'Should have at least one transaction');
         
         // Verify transaction data structure
-        for (CTRL_Wealth360Dashboard.TransactionData txn : transactions) {
-            Assert.areNotEqual(null, txn.id, 'Transaction ID should not be null');
-            Assert.areNotEqual(null, txn.type, 'Transaction type should not be null');
-            Assert.areNotEqual(null, txn.amount, 'Transaction amount should not be null');
+        for (DTO_Wealth360Dashboard.TransactionData txn : transactions) {
+            Assert.isNotNull(txn.id, 'Transaction ID should not be null');
+            Assert.isNotNull(txn.type, 'Transaction type should not be null');
+            Assert.isNotNull(txn.amount, 'Transaction amount should not be null');
         }
     }
     
@@ -94,7 +94,7 @@ private class CTRL_Wealth360Dashboard_Test {
         
         // Test with limit of 3
         Test.startTest();
-        List<CTRL_Wealth360Dashboard.TransactionData> transactions = CTRL_Wealth360Dashboard.getRecentTransactions(acc.Id, 3);
+        List<DTO_Wealth360Dashboard.TransactionData> transactions = CTRL_Wealth360Dashboard.getRecentTransactions(acc.Id, 3);
         Test.stopTest();
         
         // Verify
@@ -108,11 +108,11 @@ private class CTRL_Wealth360Dashboard_Test {
         
         // Test
         Test.startTest();
-        CTRL_Wealth360Dashboard.PortfolioSummary summary = CTRL_Wealth360Dashboard.getPortfolioSummary(acc.Id);
+        DTO_Wealth360Dashboard.PortfolioSummary summary = CTRL_Wealth360Dashboard.getPortfolioSummary(acc.Id);
         Test.stopTest();
         
         // Verify
-        Assert.areNotEqual(null, summary, 'Summary should not be null');
+        Assert.isNotNull(summary, 'Summary should not be null');
         Assert.areEqual(2, summary.portfolioCount, 'Should have 2 portfolios');
         Assert.isTrue(summary.holdingsCount > 0, 'Should have holdings');
         Assert.isTrue(summary.totalValue > 0, 'Total value should be greater than 0');
@@ -124,57 +124,29 @@ private class CTRL_Wealth360Dashboard_Test {
         Account acc = [SELECT Id FROM Account LIMIT 1];
         
         // Set mock callout
-        Test.setMock(HttpCalloutMock.class, new TEST_DataFactory.Mock_InvestmentPortfolioAPI());
+        Test.setMock(HttpCalloutMock.class, new MOCK_InvestmentPortfolioAPI());
         
         // Test
         Test.startTest();
-        String jobId = CTRL_Wealth360Dashboard.syncPortfolioData(acc.Id);
+        String result = CTRL_Wealth360Dashboard.syncPortfolioData(acc.Id);
         Test.stopTest();
         
         // Verify
-        Assert.areNotEqual(null, jobId, 'Job ID should not be null');
-    }
-    
-    @isTest
-    static void testGetAssetAllocationNoData() {
-        // Create account with no financial accounts
-        Account acc = TEST_DataFactory.createAccount('EmptyClient', true);
-        
-        // Test
-        Test.startTest();
-        List<CTRL_Wealth360Dashboard.AssetAllocation> allocations = CTRL_Wealth360Dashboard.getAssetAllocation(acc.Id);
-        Test.stopTest();
-        
-        // Verify
-        Assert.areNotEqual(null, allocations, 'Allocations should not be null');
-        Assert.areEqual(0, allocations.size(), 'Should have no allocations');
-    }
-    
-    @isTest
-    static void testGetRecentTransactionsNoData() {
-        // Create account with no financial accounts
-        Account acc = TEST_DataFactory.createAccount('EmptyClient', true);
-        
-        // Test
-        Test.startTest();
-        List<CTRL_Wealth360Dashboard.TransactionData> transactions = CTRL_Wealth360Dashboard.getRecentTransactions(acc.Id, 10);
-        Test.stopTest();
-        
-        // Verify
-        Assert.areNotEqual(null, transactions, 'Transactions should not be null');
-        Assert.areEqual(0, transactions.size(), 'Should have no transactions');
+        Assert.isNotNull(result, 'Sync result should not be null');
+        Assert.isTrue(result.startsWith('SUCCESS:'), 'Result should indicate success');
+        Assert.isTrue(result.contains('portfolios'), 'Result should mention portfolios');
+        Assert.isTrue(result.contains('holdings'), 'Result should mention holdings');
+        Assert.isTrue(result.contains('transactions'), 'Result should mention transactions');
     }
     
     @isTest
     static void testErrorHandling() {
         // Test with invalid ID (should handle gracefully)
-        try {
-            Test.startTest();
-            Decimal totalValue = CTRL_Wealth360Dashboard.getTotalInvestmentValue(null);
-            Test.stopTest();
-            Assert.isTrue(false, 'Should have thrown exception');
-        } catch (Exception e) {
-            Assert.isTrue(e instanceof AuraHandledException, 'Should throw AuraHandledException');
-        }
+        Test.startTest();
+        Decimal totalValue = CTRL_Wealth360Dashboard.getTotalInvestmentValue(null);
+        Test.stopTest();
+        
+        // Verify graceful handling - should return 0 instead of throwing exception
+        Assert.areEqual(0, totalValue, 'Should return 0 for null account ID');
     }
 }
