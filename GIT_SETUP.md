@@ -28,7 +28,7 @@ git checkout -b develop
 git checkout main
 ```
 
-## Recommended Git Branching Strategy
+## Git Branching Strategy
 
 ```
 main (production-ready)
@@ -39,7 +39,7 @@ main (production-ready)
        └── feature/documentation
 ```
 
-## Useful Git Commands
+## Git Commands
 
 ### Create Feature Branch
 ```bash
@@ -63,10 +63,10 @@ git merge feature/your-feature-name
 git tag -a v1.0.0 -m "Version 1.0.0 - Initial Release"
 ```
 
-## GitHub/GitLab Setup
+## GitHub Setup
 
 ### Create Remote Repository
-1. Create new repository on GitHub/GitLab
+1. Create new repository on GitHub
 2. Copy the remote URL
 
 ### Link Local to Remote
