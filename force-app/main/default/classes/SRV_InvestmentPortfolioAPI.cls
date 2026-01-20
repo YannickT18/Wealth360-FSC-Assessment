@@ -3,7 +3,7 @@
  * @author Yannick Kayombo
  * @date 22-11-2025
  */
-public with sharing class SRV_InvestmentPortfolioAPI {
+public without sharing class SRV_InvestmentPortfolioAPI {
     
     private static final String NAMED_CREDENTIAL = 'InvestmentPortfolioAPI';
     private static final Integer MAX_RETRIES = 3;

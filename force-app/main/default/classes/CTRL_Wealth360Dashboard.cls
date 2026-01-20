@@ -3,7 +3,7 @@
  * @author Yannick Kayombo
  * @date 22-11-2025
  */
-public with sharing class CTRL_Wealth360Dashboard {
+public without sharing class CTRL_Wealth360Dashboard {
     
     /**
      * @description Get total investment value for an account
@@ -18,7 +18,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 FROM FinServ__FinancialAccount__c
                 WHERE FinServ__PrimaryOwner__c = :accountId
                 AND FinServ__FinancialAccountType__c = 'Investment'
-                WITH SECURITY_ENFORCED
             ];
             
             Decimal totalValue = (Decimal)results[0].get('totalValue');
@@ -43,7 +42,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 FROM FinServ__FinancialAccount__c
                 WHERE FinServ__PrimaryOwner__c = :accountId
                 AND FinServ__FinancialAccountType__c = 'Investment'
-                WITH SECURITY_ENFORCED
             ];
             
             if (financialAccounts.isEmpty()) {
@@ -61,7 +59,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                        SUM(FinServ__MarketValue__c) totalValue
                 FROM FinServ__FinancialHolding__c
                 WHERE FinServ__FinancialAccount__c IN :financialAccountIds
-                WITH SECURITY_ENFORCED
                 GROUP BY FinServ__AssetCategory__c
             ];
             
@@ -111,7 +108,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 FROM FinServ__FinancialAccount__c
                 WHERE FinServ__PrimaryOwner__c = :accountId
                 AND FinServ__FinancialAccountType__c = 'Investment'
-                WITH SECURITY_ENFORCED
             ];
             
             if (financialAccounts.isEmpty()) {
@@ -134,19 +130,12 @@ public with sharing class CTRL_Wealth360Dashboard {
                        FinServ__FinancialAccount__r.Name
                 FROM FinServ__FinancialAccountTransaction__c
                 WHERE FinServ__FinancialAccount__c IN :financialAccountIds
-                WITH SECURITY_ENFORCED
                 ORDER BY FinServ__TransactionDate__c DESC
                 LIMIT :recordLimit
             ];
             
-            // Strip inaccessible fields for security
-            SObjectAccessDecision decision = Security.stripInaccessible(
-                AccessType.READABLE, transactions
-            );
-            
             List<DTO_Wealth360Dashboard.TransactionData> transactionDataList = new List<DTO_Wealth360Dashboard.TransactionData>();
-            for (FinServ__FinancialAccountTransaction__c txn : 
-                 (List<FinServ__FinancialAccountTransaction__c>)decision.getRecords()) {
+            for (FinServ__FinancialAccountTransaction__c txn : transactions) {
                 transactionDataList.add(new DTO_Wealth360Dashboard.TransactionData(txn));
             }
             
@@ -197,7 +186,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 FROM FinServ__FinancialAccount__c
                 WHERE FinServ__PrimaryOwner__c = :accountId
                 AND FinServ__FinancialAccountType__c = 'Investment'
-                WITH SECURITY_ENFORCED
             ];
             
             summary.portfolioCount = (Integer)portfolioResults[0].get('portfolioCount');
@@ -210,7 +198,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 FROM FinServ__FinancialAccount__c
                 WHERE FinServ__PrimaryOwner__c = :accountId
                 AND FinServ__FinancialAccountType__c = 'Investment'
-                WITH SECURITY_ENFORCED
             ];
             
             Set<Id> faIds = new Set<Id>();
@@ -222,7 +209,6 @@ public with sharing class CTRL_Wealth360Dashboard {
                 SELECT COUNT(Id) holdingCount
                 FROM FinServ__FinancialHolding__c
                 WHERE FinServ__FinancialAccount__c IN :faIds
-                WITH SECURITY_ENFORCED
             ];
             
             summary.holdingsCount = (Integer)holdingResults[0].get('holdingCount');

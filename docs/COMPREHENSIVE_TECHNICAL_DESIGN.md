@@ -55,6 +55,15 @@
 4. **Regulatory Compliance**: Manual processes create audit trail gaps and compliance risks
 5. **Competitive Disadvantage**: Inability to provide real-time, comprehensive portfolio insights vs. competitors
 
+### 1.3 Success Criteria
+
+**The solution must achieve:**
+- **90% reduction** in manual data collection time
+- **Real-time** portfolio synchronization (< 30 seconds)
+- **Zero data entry errors** through automated integration
+- **360-degree client view** within Salesforce FSC platform
+- **Full audit trail** for regulatory compliance
+- **Scalable architecture** supporting 10,000+ client portfolios
 
 ---
 
@@ -99,6 +108,52 @@
 
 ---
 
+## 3. Business Process View
+
+### 3.1 Current State Process Flow
+
+```
+[DIAGRAM PLACEHOLDER - Business Process Current State]
+
+Manual Process Flow:
+1. Advisor receives client meeting request
+2. Manually login to multiple external systems
+3. Export portfolio data from each platform
+4. Consolidate data in spreadsheets
+5. Create presentation materials manually
+6. Conduct client meeting with potentially outdated data
+7. Update Salesforce manually after meeting
+```
+
+**Pain Points in Current Process:**
+- ⚠️ 2-3 hours manual data preparation
+- ⚠️ Data silos across multiple systems
+- ⚠️ Risk of human error in consolidation
+- ⚠️ No real-time updates during meetings
+- ⚠️ Inconsistent data presentation
+
+### 3.2 Future State Process Flow
+
+```
+[DIAGRAM PLACEHOLDER - Business Process Future State]
+
+Automated Process Flow:
+1. Advisor opens Salesforce FSC client record
+2. Wealth360 dashboard displays real-time portfolio data
+3. One-click sync updates all portfolio information
+4. Interactive charts and analytics available instantly
+5. Advisor focuses on strategic recommendations
+6. All interactions automatically logged in Salesforce
+7. Compliance reports generated automatically
+```
+
+**Benefits of Future Process:**
+- ✅ 5-minute data access (vs. 3 hours)
+- ✅ Single source of truth in Salesforce
+- ✅ Zero manual data entry
+- ✅ Real-time updates during meetings
+- ✅ Consistent professional presentation
+
 ---
 
 ## 4. Simplified Architecture
@@ -106,7 +161,7 @@
 **Wealth360 implements a clean, maintainable architecture with focused components:**
 
 ```
-[SIMPLIFIED ARCHITECTURE]
+[SIMPLIFIED ARCHITECTURE - Production Ready]
 
 Architecture Overview:
 
@@ -159,6 +214,50 @@ Architecture Overview:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### 4.1 Architecture Principles
+
+**Simplicity & Reliability**
+- **8 Focused Classes**: Each with clear, single responsibility
+- **Direct Field Mapping**: No complex metadata dependencies  
+- **Graceful Error Handling**: Partial failure support with logging
+- **Clean Separation**: API, Business Logic, and UI clearly separated
+
+**Performance & Scalability**
+- **Bulk Operations**: Efficient handling of large datasets
+- **Partial Success**: Continue processing despite individual failures
+- **Minimal Queries**: Optimized SOQL with security enforcement
+- **Response Caching**: Improved dashboard performance
+│  │ Queueable_PortfolioSync ││    │  │ Named Credential        ││
+│  │ • Async Processing      ││    │  │ • Secure Authentication ││
+│  │ • Bulk Data Sync        ││    │  │ • SSL/TLS Encryption    ││
+│  │ • Job Monitoring        ││    │  │ • Token Management      ││
+│  └─────────────────────────┘│    │  └─────────────────────────┘│
+└─────────────────────────────┘    └─────────────┬───────────────┘
+              │                                  │ HTTPS/REST API
+              ▼                                  ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                          DATA TIER                               │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                Salesforce FSC Objects                       ││
+│  │  • FinServ__FinancialAccount__c (Portfolios)                ││
+│  │  • FinServ__FinancialHolding__c (Holdings)                  ││
+│  │  • FinServ__FinancialAccountTransaction__c (Transactions)    ││
+│  │  • Account (Person Accounts - Clients)                      ││
+│  │  • Custom Metadata for Field Mapping                        ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      EXTERNAL SYSTEMS                            │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │        Investment Portfolio API (External)                   ││
+│  │  • Portfolio Data                                            ││
+│  │  • Holdings Information                                      ││
+│  │  • Transaction History                                       ││
+│  │  • Real-time Market Data                                     ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 4.1 Architecture Principles
@@ -172,6 +271,85 @@ Architecture Overview:
 
 ---
 
+## 5. Data Model
+
+```
+[DIAGRAM PLACEHOLDER - Data Model Entity Relationship Diagram]
+
+Core Entities and Relationships:
+
+┌─────────────────────────────────────────────────────────────────┐
+│                          ACCOUNT                                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  Person Account (Client)                                    ││
+│  │  • Id (Primary Key)                                         ││
+│  │  • FirstName, LastName                                      ││
+│  │  • PersonEmail                                              ││
+│  │  • ExternalClientId__c (External ID)                        ││
+│  │  • LastSyncDate__c                                          ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────┬───────────────────────────────────┘
+                              │ 1:N
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  FINSERV__FINANCIALACCOUNT__C                   │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  Financial Account (Portfolio)                              ││
+│  │  • Id (Primary Key)                                         ││
+│  │  • Name (Portfolio Name)                                    ││
+│  │  • FinServ__PrimaryOwner__c (FK to Account)                 ││
+│  │  • ExternalPortfolioId__c (External ID)                     ││
+│  │  • TotalAssetValue__c                                       ││
+│  │  • LastSyncDate__c                                          ││
+│  │  • FinServ__FinancialAccountType__c = 'Investment'          ││
+│  │  • FinServ__Status__c                                       ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────┬───────────────────────────────────┘
+                              │ 1:N
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  FINSERV__FINANCIALHOLDING__C                   │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  Financial Holding (Asset Position)                         ││
+│  │  • Id (Primary Key)                                         ││
+│  │  • FinServ__FinancialAccount__c (FK to Financial Account)   ││
+│  │  • ExternalHoldingId__c (External ID)                       ││
+│  │  • FinServ__AssetCategory__c                                ││
+│  │  • FinServ__AssetCategoryName__c                            ││
+│  │  • FinServ__MarketValue__c                                  ││
+│  │  • FinServ__Price__c                                        ││
+│  │  • FinServ__Units__c                                        ││
+│  │  • PercentOfPortfolio__c                                    ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│              FINSERV__FINANCIALACCOUNTTRANSACTION__C            │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  Financial Account Transaction                              ││
+│  │  • Id (Primary Key)                                         ││
+│  │  • FinServ__FinancialAccount__c (FK to Financial Account)   ││
+│  │  • ExternalTransactionId__c (External ID)                   ││
+│  │  • FinServ__TransactionType__c                              ││
+│  │  • FinServ__Amount__c                                       ││
+│  │  • FinServ__TransactionDate__c                              ││
+│  │  • FinServ__Status__c                                       ││
+│  │  • Description__c                                           ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                    WEALTH360_FIELD_MAPPING__MDT                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  Custom Metadata Type (Configuration)                       ││
+│  │  • DeveloperName (Primary Key)                              ││
+│  │  • ObjectType__c (Portfolio/Holding/Transaction)            ││
+│  │  • APIFieldName__c (Source Field)                           ││
+│  │  • SalesforceFieldName__c (Target Field)                    ││
+│  │  • DataType__c (String/Decimal/Date/Boolean)                ││
+│  │  • IsRequired__c                                            ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 5.1 Custom Fields Added to FSC Objects
@@ -202,9 +380,103 @@ Architecture Overview:
 
 Synchronization Logic Flow:
 
+┌─────────────────────────────────────────────────────────────────┐
+│                    USER INTERACTION LAYER                       │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  1. User clicks "Sync Portfolio" button                    ││
+│  │     ↓                                                       ││
+│  │  2. Lightning Web Component calls controller                ││
+│  │     wealth360Dashboard.js → CTRL_Wealth360Dashboard        ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     CONTROLLER LOGIC                             │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  CTRL_Wealth360Dashboard.syncPortfolioData()                ││
+│  │  ├─ Validate user permissions (FLS/CRUD)                   ││
+│  │  ├─ Validate account ID parameter                          ││
+│  │  ├─ Call service layer for data sync                       ││
+│  │  └─ Return success/error message to UI                     ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      SERVICE LOGIC                               │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  SRV_InvestmentPortfolioAPI.getAllPortfolioDataForSync()    ││
+│  │  ├─ Construct Named Credential endpoint URL                ││
+│  │  ├─ Make HTTP callout to external API                      ││
+│  │  ├─ Implement retry logic (3 attempts)                     ││
+│  │  ├─ Parse JSON response                                     ││
+│  │  └─ Return ComprehensivePortfolioData wrapper              ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    DATA PROCESSING LOGIC                         │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │  SRV_PortfolioUpdate.syncComprehensivePortfolioData()       ││
+│  │  ├─ Apply metadata-driven field mapping                    ││
+│  │  ├─ Transform external data to FSC objects                 ││
+│  │  ├─ Validate data integrity                                ││
+│  │  ├─ Perform bulk upsert operations                         ││
+│  │  └─ Update sync timestamps                                 ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
 
+Decision Logic Flow:
+
+┌─────────────────────────────────────────────────────────────────┐
+│                     API RESPONSE HANDLING                        │
+│                                                                 │
+│  ┌─ HTTP Status = 200? ────────────────┐                        │
+│  │                    Yes              │ No                     │
+│  ▼                                     ▼                        │
+│ Parse JSON response                   Check error type          │
+│  │                                     │                        │
+│  ├─ Contains 'portfolios'? ────────────┼─ 429 (Rate Limit)?     │
+│  │           Yes        │ No           │          │             │
+│  ▼                      ▼              │          ▼             │
+│ Process portfolio     Return empty     │        Wait & Retry    │
+│ data with service     data structure   │                        │
+│ layer                                  │          │             │
+│                                        │          ▼             │
+│                                        └─ 500+ (Server Error)? │
+│                                                   │             │
+│                                                   ▼             │
+│                                                Log error &      │
+│                                                throw exception   │
+└─────────────────────────────────────────────────────────────────┘
+
+Field Mapping Logic:
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   METADATA-DRIVEN MAPPING                        │
+│                                                                 │
+│  For each API field in response:                                │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │ 1. Query Wealth360_Field_Mapping__mdt                      ││
+│  │    WHERE APIFieldName__c = :fieldName                      ││
+│  │                                                             ││
+│  │ 2. Found mapping record?                                    ││
+│  │    ├─ Yes: Use SalesforceFieldName__c                      ││
+│  │    └─ No:  Use default field mapping                       ││
+│  │                                                             ││
+│  │ 3. Convert data type based on DataType__c:                 ││
+│  │    ├─ 'Decimal' → Decimal.valueOf()                        ││
+│  │    ├─ 'Date' → Date.valueOf()                              ││
+│  │    ├─ 'Boolean' → Boolean.valueOf()                        ││
+│  │    └─ 'String' → String.valueOf()                          ││
+│  │                                                             ││
+│  │ 4. Validate required fields                                ││
+│  │ 5. Set value on Salesforce object                          ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
 ```
-<img width="1001" height="811" alt="LOGIC FLOW DIAGRAM drawio" src="https://github.com/user-attachments/assets/d9f6ff19-d4a2-43d8-a52b-7dad38e073d2" />
 
 ### 6.1 Error Handling Strategy
 
@@ -458,8 +730,112 @@ public static APIResponse getComprehensivePortfolioData(Id accountId, Boolean in
 }
 ```
 
+### 8.4 Compliance & Auditing
 
+#### **Regulatory Compliance**
+- **POPI Act Compliance**: Personal information protection (South African regulation)
+- **GDPR Readiness**: EU data protection regulation compliance
+- **SOX Compliance**: Financial data integrity controls
+- **PCI DSS**: Payment card industry data security standards
 
+#### **Audit Trail**
+- **API Call Logging**: All external API calls logged with timestamps
+- **Data Modification Tracking**: FSC object changes tracked via field history
+- **User Activity Monitoring**: Complete audit trail of user interactions
+- **Error Logging**: Comprehensive error logging for troubleshooting
+
+#### **Data Privacy Controls**
+- **Data Anonymization**: Option to anonymize client data in non-production environments
+- **Right to be Forgotten**: Automated data deletion capabilities
+- **Data Export**: Client data export functionality for portability
+- **Consent Management**: Integration with consent management platforms
+
+---
+
+## 9. Data Migration Strategy
+
+### 9.1 Migration Approach
+
+#### **Phase 1: Assessment & Planning**
+- **Data Inventory**: Complete catalog of existing client portfolio data
+- **Data Quality Assessment**: Analysis of data completeness, accuracy, and consistency
+- **Mapping Definition**: Detailed field mapping from legacy systems to FSC objects
+- **Volume Analysis**: Assessment of data volumes and processing time requirements
+
+#### **Phase 2: Data Extraction & Preparation**
+- **Legacy System Integration**: Temporary APIs or data exports from existing systems
+- **Data Cleansing**: Standardization and validation of portfolio data
+- **Transformation Logic**: ETL processes to convert data to FSC format
+- **Data Staging**: Secure staging environment for data preparation
+
+#### **Phase 3: Migration Execution**
+- **Pilot Migration**: Small subset of clients for testing and validation
+- **Bulk Migration**: Full dataset migration using Salesforce Data Loader/APIs
+- **Validation & Reconciliation**: Post-migration data validation and error correction
+- **Cutover**: Switch from legacy systems to Wealth360 platform
+
+### 9.2 Migration Components
+
+#### **Data Migration Tool Stack**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    MIGRATION ARCHITECTURE                        │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────┐ │
+│  │  Legacy System  │    │  ETL Platform   │    │ Salesforce  │ │
+│  │  • Portfolio DB │───▶│  • Talend       │───▶│ • FSC Orgs  │ │
+│  │  • Transaction │    │  • DataLoader   │    │ • Bulk API  │ │
+│  │    History      │    │  • Custom Apex │    │ • Streaming │ │
+│  │  • Client Data │    │  • Validation   │    │   API       │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────┘ │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────────┐│
+│  │                  DATA QUALITY PIPELINE                     ││
+│  │  1. Extract → 2. Validate → 3. Transform → 4. Load        ││
+│  │     │            │             │             │            ││
+│  │     ▼            ▼             ▼             ▼            ││
+│  │  CSV/JSON    Completeness  Field Mapping  Bulk Insert    ││
+│  │  Exports     Accuracy      Data Types     Error Handling ││
+│  └─────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 9.3 Migration Validation Strategy
+
+#### **Data Validation Checkpoints**
+1. **Pre-Migration Validation**:
+   - Source data completeness checks
+   - Data format validation
+   - Referential integrity verification
+
+2. **Migration Process Validation**:
+   - Real-time ETL monitoring
+   - Batch processing status tracking
+   - Error rate monitoring and alerting
+
+3. **Post-Migration Validation**:
+   - Record count reconciliation
+   - Data sampling and comparison
+   - Business logic validation
+
+#### **Rollback Strategy**
+- **Backup Creation**: Full org backup before migration
+- **Rollback Procedures**: Documented steps for reverting changes
+- **Data Recovery**: Point-in-time recovery capabilities
+- **System Downtime**: Minimal downtime migration approach
+
+### 9.4 Migration Timeline
+
+| Phase | Duration | Activities | Success Criteria |
+|-------|----------|------------|------------------|
+| **Assessment** | 2 weeks | Data analysis, mapping design | 100% data inventory complete |
+| **Preparation** | 3 weeks | ETL development, staging setup | All transformation rules validated |
+| **Pilot Migration** | 1 week | 100 clients migration test | Zero data loss, <1% error rate |
+| **Full Migration** | 2 weeks | All client data migration | 100% data migrated, validated |
+| **Validation** | 1 week | Testing, reconciliation | Business validation complete |
+| **Go-Live** | 1 week | Production cutover | User acceptance, training complete |
+
+---
 
 ## 10. Component List
 
@@ -601,3 +977,13 @@ The Wealth360 FSC Assessment solution provides a comprehensive, enterprise-grade
 4. **Security by Design**: Comprehensive security controls at every layer
 5. **User Experience**: Intuitive dashboard with professional visualizations
 6. **Maintainability**: Service-oriented architecture with clear separation of concerns
+
+### Next Steps
+
+1. **Production Deployment**: Follow the deployment checklist for go-live
+2. **User Training**: Comprehensive training program for financial advisors
+3. **Performance Monitoring**: Implement monitoring and alerting for production use
+4. **Continuous Improvement**: Regular review and enhancement of features
+5. **Scaling Strategy**: Plan for increased user adoption and data volumes
+
+---

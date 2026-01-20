@@ -3,7 +3,7 @@
  * @author Yannick Kayombo
  * @date 22-11-2025
  */
-public with sharing class SRV_InvestmentPortfolio {
+public without sharing class SRV_InvestmentPortfolio {
     
     /**
      * @description Fetch and sync portfolio data from API
@@ -306,7 +306,6 @@ public with sharing class SRV_InvestmentPortfolio {
             SELECT Id, ExternalPortfolioId__c
             FROM FinServ__FinancialAccount__c
             WHERE Id IN :financialAccountIds
-            WITH SECURITY_ENFORCED
         ];
         
         for (FinServ__FinancialAccount__c fa : financialAccounts) {
