@@ -158,4 +158,61 @@ private class SRV_InvestmentPortfolioAPI_Test {
         Assert.isNotNull(data, 'Data should not be null even on error');
         Assert.areEqual(0, data.portfolios.size(), 'Should return empty portfolios on error');
     }
+    
+    @isTest
+    static void testClientErrorScenario() {
+        // Setup
+        Account acc = TEST_DataFactory.createAccount('TestClient', true);
+        
+        // Test client error (4xx)
+        Test.setMock(HttpCalloutMock.class, new MOCK_InvestmentPortfolioAPI(400, 'error'));
+        
+        Test.startTest();
+        SRV_InvestmentPortfolioAPI.APIResponse response = SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, true, true, 30);
+        Test.stopTest();
+        
+        // Verify error response
+        Assert.isFalse(response.success, 'Response should be unsuccessful for client error');
+        Assert.areEqual(400, response.statusCode, 'Status code should be 400');
+        Assert.isTrue(response.errorMessage.contains('Client error'), 'Error message should mention client error');
+    }
+    
+    @isTest
+    static void testParseSinglePortfolioFormat() {
+        // Test parsing when API returns single portfolio (not a list)
+        Map<String, Object> mockResponseData = new Map<String, Object>{
+            'portfolio' => new Map<String, Object>{
+                'portfolioId' => 'PORT001',
+                'name' => 'Single Portfolio',
+                'total_value' => 50000
+            }
+        };
+        
+        Test.startTest();
+        SRV_InvestmentPortfolioAPI.ComprehensivePortfolioData result = SRV_InvestmentPortfolioAPI.parseComprehensiveData(mockResponseData);
+        Test.stopTest();
+        
+        // Verify single portfolio was parsed
+        Assert.areEqual(1, result.portfolios.size(), 'Should have 1 portfolio');
+        Map<String, Object> portfolio = result.portfolios[0];
+        Assert.areEqual('PORT001', portfolio.get('portfolioId'), 'Portfolio ID should match');
+        Assert.areEqual('Single Portfolio', portfolio.get('name'), 'Portfolio name should match');
+    }
+    
+    @isTest
+    static void testInvalidJsonResponse() {
+        // Test parsing error handling
+        Account acc = TEST_DataFactory.createAccount('TestClient', true);
+        
+        // Mock returns invalid JSON
+        Test.setMock(HttpCalloutMock.class, new MOCK_InvestmentPortfolioAPI(200, 'error', true));
+        
+        Test.startTest();
+        SRV_InvestmentPortfolioAPI.APIResponse response = SRV_InvestmentPortfolioAPI.getComprehensivePortfolioData(acc.Id, true, true, 30);
+        Test.stopTest();
+        
+        // Verify error handling
+        Assert.isFalse(response.success, 'Response should be unsuccessful for invalid JSON');
+        Assert.isTrue(response.errorMessage.contains('Unexpected error'), 'Error message should mention unexpected error');
+    }
 }
