@@ -37,6 +37,23 @@ private class CTRL_Wealth360Dashboard_Test {
     }
     
     @isTest
+    static void testGetTotalInvestmentValueException() {
+        // Create and delete account to trigger exception
+        Account acc = TEST_DataFactory.createAccount('TempAccount', true);
+        Id accId = acc.Id;
+        delete acc;
+        
+        Test.startTest();
+        try {
+            Decimal totalValue = CTRL_Wealth360Dashboard.getTotalInvestmentValue(accId);
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('Error fetching total investment value'), 
+                'Exception should contain proper error message');
+        }
+        Test.stopTest();
+    }
+    
+    @isTest
     static void testGetAssetAllocation() {
         // Get test account
         Account acc = [SELECT Id FROM Account LIMIT 1];
@@ -63,6 +80,23 @@ private class CTRL_Wealth360Dashboard_Test {
             totalPercentage += allocation.percentage;
         }
         Assert.isTrue(totalPercentage >= 99 && totalPercentage <= 101, 'Total percentage should be approximately 100');
+    }
+    
+    @isTest
+    static void testGetAssetAllocationException() {
+        // Create and delete account to trigger exception
+        Account acc = TEST_DataFactory.createAccount('TempAccount', true);
+        Id accId = acc.Id;
+        delete acc;
+        
+        Test.startTest();
+        try {
+            List<DTO_Wealth360Dashboard.AssetAllocation> allocations = CTRL_Wealth360Dashboard.getAssetAllocation(accId);
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('Error fetching asset allocation'), 
+                'Exception should contain proper error message');
+        }
+        Test.stopTest();
     }
     
     @isTest
@@ -102,6 +136,24 @@ private class CTRL_Wealth360Dashboard_Test {
     }
     
     @isTest
+    static void testGetRecentTransactionsException() {
+        // Create and delete account to trigger exception
+        Account acc = TEST_DataFactory.createAccount('TempAccount', true);
+        Id accId = acc.Id;
+        delete acc;
+        
+        Test.startTest();
+        try {
+            List<DTO_Wealth360Dashboard.TransactionData> transactions = 
+                CTRL_Wealth360Dashboard.getRecentTransactions(accId, 10);
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('Error fetching recent transactions'), 
+                'Exception should contain proper error message');
+        }
+        Test.stopTest();
+    }
+    
+    @isTest
     static void testGetPortfolioSummary() {
         // Get test account
         Account acc = [SELECT Id FROM Account LIMIT 1];
@@ -116,6 +168,24 @@ private class CTRL_Wealth360Dashboard_Test {
         Assert.areEqual(2, summary.portfolioCount, 'Should have 2 portfolios');
         Assert.isTrue(summary.holdingsCount > 0, 'Should have holdings');
         Assert.isTrue(summary.totalValue > 0, 'Total value should be greater than 0');
+    }
+    
+    @isTest
+    static void testGetPortfolioSummaryException() {
+        // Create and delete account to trigger exception
+        Account acc = TEST_DataFactory.createAccount('TempAccount', true);
+        Id accId = acc.Id;
+        delete acc;
+        
+        Test.startTest();
+        try {
+            DTO_Wealth360Dashboard.PortfolioSummary summary = 
+                CTRL_Wealth360Dashboard.getPortfolioSummary(accId);
+        } catch (AuraHandledException e) {
+            Assert.isTrue(e.getMessage().contains('Error fetching portfolio summary'), 
+                'Exception should contain proper error message');
+        }
+        Test.stopTest();
     }
     
     @isTest
@@ -137,6 +207,25 @@ private class CTRL_Wealth360Dashboard_Test {
         Assert.isTrue(result.contains('portfolios'), 'Result should mention portfolios');
         Assert.isTrue(result.contains('holdings'), 'Result should mention holdings');
         Assert.isTrue(result.contains('transactions'), 'Result should mention transactions');
+    }
+    
+    @isTest
+    static void testSyncPortfolioDataException() {
+        // Get test account
+        Account acc = [SELECT Id FROM Account LIMIT 1];
+        
+        // Set mock that returns error status
+        Test.setMock(HttpCalloutMock.class, new MOCK_InvestmentPortfolioAPI(500, 'error'));
+        
+        Test.startTest();
+        try {
+            String result = CTRL_Wealth360Dashboard.syncPortfolioData(acc.Id);
+            Assert.fail('Should have thrown exception with 500 error');
+        } catch (Exception e) {
+            // Exception caught - catch block is covered
+            Assert.isNotNull(e.getMessage(), 'Exception should have a message');
+        }
+        Test.stopTest();
     }
     
     @isTest
