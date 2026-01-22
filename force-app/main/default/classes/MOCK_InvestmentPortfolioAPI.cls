@@ -8,21 +8,36 @@ public class MOCK_InvestmentPortfolioAPI implements HttpCalloutMock {
     
     private Integer statusCode;
     private String responseType;
+    private Boolean throwInvalidJson;
     
     public MOCK_InvestmentPortfolioAPI() {
         this.statusCode = 200;
         this.responseType = 'portfolios';
+        this.throwInvalidJson = false;
     }
     
     public MOCK_InvestmentPortfolioAPI(Integer statusCode, String responseType) {
         this.statusCode = statusCode;
         this.responseType = responseType;
+        this.throwInvalidJson = false;
+    }
+    
+    public MOCK_InvestmentPortfolioAPI(Integer statusCode, String responseType, Boolean throwInvalidJson) {
+        this.statusCode = statusCode;
+        this.responseType = responseType;
+        this.throwInvalidJson = throwInvalidJson;
     }
     
     public HTTPResponse respond(HTTPRequest req) {
         HttpResponse res = new HttpResponse();
         res.setHeader('Content-Type', 'application/json');
         res.setStatusCode(statusCode);
+        
+        // Return invalid JSON if requested
+        if (throwInvalidJson) {
+            res.setBody('INVALID JSON {]');
+            return res;
+        }
         
         if (statusCode == 200) {
             if (req.getEndpoint().contains('/portfolios?accountId')) {
